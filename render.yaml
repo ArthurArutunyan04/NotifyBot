@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: notify-bot-backend
+    runtime: docker
+    buildCommand: ""
+    startCommand: "java -jar /app/app.jar"
+    envVars:
+      - key: BOT_TOKEN
+        value: 7738261557:AAGdmoDF1_80OtRdTPZzU-gB5rC449SrIDc
+      - key: BOT_USERNAME
+        value: @MacanSwag_bot
+      - key: PORT
+        value: 8080
