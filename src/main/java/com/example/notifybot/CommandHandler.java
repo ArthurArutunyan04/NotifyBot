@@ -17,4 +17,8 @@ public class CommandHandler {
                 return "Я понимаю только команды: /start, /hello, /bye";
         }
     }
+
+    public String getWebAppResponse(String data) {
+        return "WebApp says: " + data.toUpperCase();
+    }
 }
