@@ -13,6 +13,16 @@ java {
     }
 }
 
+tasks.register('installJava') {
+    doLast {
+        println "Using system Java: ${System.getProperty('java.version')}"
+    }
+}
+
+build {
+    dependsOn installJava
+}
+
 repositories {
     mavenCentral()
 }
