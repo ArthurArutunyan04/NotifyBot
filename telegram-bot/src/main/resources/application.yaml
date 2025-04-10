@@ -23,6 +23,4 @@ logging:
     com.example.notifybot: DEBUG
 
 website:
-  url=https://your-bot-app:
-    netlify:
-      app:
+  url: "https://notify-task-bot.onrender.com"

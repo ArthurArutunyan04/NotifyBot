@@ -17,8 +17,6 @@ public class CommandHandler {
     public CommandHandler() {
         commands.put("/start", new StartCommand());
         commands.put("/help", new HelpCommand());
-        commands.put("/site", new WebsiteCommand());
-        commands.put("/website", new WebsiteCommand());
     }
 
     public String handleCommand(String input) {

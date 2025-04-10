@@ -49,6 +49,10 @@ public class NotifyBot extends TelegramLongPollingBot {
 
     private void sendWebAppLink(Long chatId, String url) {
         try {
+            if (url == null || url.isBlank()) {
+                sendTextMessage(chatId, "Веб-приложение временно недоступно");
+                return;
+            }
             InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
             InlineKeyboardButton button = new InlineKeyboardButton();
 
