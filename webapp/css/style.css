@@ -1,0 +1,70 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.app-container {
+    max-width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Telegram WebApp */
+.telegram-btn {
+    background-color: #0088cc;
+    color: white;
+    border: none;
+}
+
+/* mobile */
+.mobile-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+/* desktop */
+.qr-code {
+    margin: 20px auto;
+    text-align: center;
+}
+
+/* any platforms */
+@media (max-width: 768px) {
+    .app-container {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+.tg-content,
+.mobile-content,
+.desktop-content {
+    display: none;
+}
+
+/* JavaScript добавит класс .platform-tg, .platform-mobile или .platform-desktop */
+body.platform-tg .tg-content,
+body.platform-mobile .mobile-content,
+body.platform-desktop .desktop-content {
+    display: block;
+}

@@ -21,3 +21,8 @@ logging:
   level:
     root: INFO
     com.example.notifybot: DEBUG
+
+website:
+  url=https://your-bot-app:
+    netlify:
+      app:

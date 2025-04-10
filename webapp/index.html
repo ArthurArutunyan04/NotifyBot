@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бот-ассистент</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-container">
+    <h1 class="app-title" id="title">Добро пожаловать!</h1>
+
+    <div class="content">
+        <!-- Telegram WebApp -->
+        <div class="tg-content" id="tgContent">
+            <p>В чате</p>
+            <button id="tgBackBtn" class="btn telegram-btn">← Назад в бот</button>
+        </div>
+
+        <!-- Mobile browser -->
+        <div class="mobile-content" id="mobileContent">
+            <p>Мобильный браузер</p>
+            <a href="https://t.me/macanswag_bot" class="btn mobile-btn">Открыть бота</a>
+        </div>
+
+        <!-- Desktop browser -->
+        <div class="desktop-content" id="desktopContent">
+            <p>Десктопный браузер</p>
+            <div class="qr-code">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/macanswag_bot"
+                     alt="QR код для бота">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>

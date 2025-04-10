@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.List;
 
 @Component
 public class NotifyBot extends TelegramLongPollingBot {
@@ -34,19 +38,45 @@ public class NotifyBot extends TelegramLongPollingBot {
             long chatId = update.getMessage().getChatId();
 
             String response = commandHandler.handleCommand(messageText);
-            sendResponse(chatId, response);
+
+            if (response.startsWith("WEBAPP:")) {
+                sendWebAppLink(chatId, response.replace("WEBAPP:", ""));
+            } else {
+                sendTextMessage(chatId, response);
+            }
         }
     }
 
-    private void sendResponse(long chatId, String text) {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(text);
-
+    private void sendWebAppLink(Long chatId, String url) {
         try {
+            InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
+            InlineKeyboardButton button = new InlineKeyboardButton();
+
+            button.setText("Открыть веб-приложение 🌐");
+            button.setUrl(url);
+
+            keyboard.setKeyboard(List.of(List.of(button)));
+
+            SendMessage message = SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text("Нажмите кнопку ниже, чтобы открыть веб-версию:")
+                    .replyMarkup(keyboard)
+                    .build();
+
             execute(message);
         } catch (TelegramApiException e) {
-            logger.error("Error sending message", e);
+            logger.error("Failed to send webapp link", e);
+        }
+    }
+
+    private void sendTextMessage(Long chatId, String text) {
+        try {
+            execute(SendMessage.builder()
+                    .chatId(chatId.toString())
+                    .text(text)
+                    .build());
+        } catch (TelegramApiException e) {
+            logger.error("Failed to send message", e);
         }
     }
 }
