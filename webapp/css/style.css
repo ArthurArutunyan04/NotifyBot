@@ -1,19 +1,75 @@
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+html, body {
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0px;
+    padding: 0px;
+    background-color: #d0e2ea;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .app-container {
     max-width: 100%;
     min-height: 100vh;
-    padding: 20px;
+    padding: 0px;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
 }
 
-.btn {
+header {
+    color: #FFFFFF;
+    width: 100%;
+    background-color: #1565C0;
+    display: flex;
+    justify-content: center;
+    padding: 7px 0;
+}
+
+.bot-name-container {
+    overflow: hidden;
+}
+
+.bot-name {
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    white-space: nowrap;
+    width: 0;
+    padding-left: 12px;
+    animation: typing 2s steps(20) 1 forwards;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 10ch; }
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.btn, button {
     display: inline-block;
     padding: 12px 24px;
     border-radius: 8px;
@@ -22,35 +78,56 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
-    margin-top: 20px;
+    margin: 7px 0;
+    width: 80%;
+    max-width: 300px;
+    font-size: 18px;
+    border: none;
+    color: white;
 }
 
-/* Telegram WebApp */
 .telegram-btn {
     background-color: #0088cc;
-    color: white;
-    border: none;
 }
 
-/* mobile */
 .mobile-btn {
     background-color: #28a745;
-    color: white;
 }
 
-/* desktop */
 .qr-code {
     margin: 20px auto;
     text-align: center;
 }
 
-/* any platforms */
+.action-btn {
+    background-color: #388E3C;
+    padding: 15px 32px;
+}
+
+.action-btn:hover {
+    background-color: #2E7D32;
+}
+
+.back-button {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    padding: 15px 32px;
+    margin-bottom: 50px;
+}
+
+.back-button:hover {
+    background-color: #1976D2;
+}
+
 @media (max-width: 768px) {
     .app-container {
         padding: 15px;
     }
 
-    .btn {
+    .btn, button {
         width: 100%;
         padding: 15px;
     }
@@ -60,11 +137,13 @@ body {
 .mobile-content,
 .desktop-content {
     display: none;
+    margin-bottom: 100px;
 }
 
-/* JavaScript добавит класс .platform-tg, .platform-mobile или .platform-desktop */
 body.platform-tg .tg-content,
 body.platform-mobile .mobile-content,
 body.platform-desktop .desktop-content {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
