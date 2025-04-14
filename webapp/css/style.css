@@ -20,6 +20,7 @@ body {
 .app-container {
     max-width: 100%;
     min-height: 100vh;
+    margin: 0px;
     padding: 0px;
     box-sizing: border-box;
     display: flex;
@@ -67,6 +68,8 @@ header {
     align-items: center;
     flex-grow: 1;
     justify-content: center;
+    width: 100%;
+    padding: 0;
 }
 
 .btn, button {
@@ -124,7 +127,7 @@ header {
 
 @media (max-width: 768px) {
     .app-container {
-        padding: 15px;
+        padding: 0px;
     }
 
     .btn, button {
@@ -138,6 +141,8 @@ header {
 .desktop-content {
     display: none;
     margin-bottom: 100px;
+    width: 100%;
+    padding: 0px;
 }
 
 body.platform-tg .tg-content,
