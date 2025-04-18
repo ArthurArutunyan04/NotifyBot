@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выполненные задачи - NotifyBot</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/completed_tasks.css">
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <div class="bot-name-container">
+            <h1 class="bot-name">Выполненные задачи</h1>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="tasks-container" id="completedTasksContainer">
+            <div class="task-item completed">
+                <h3>Пример выполненной задачи</h3>
+                <p>Описание задачи</p>
+                <div class="task-meta">
+                    <span class="completion-date">Выполнено: 25.12.2023</span>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="navigateTo('index.html')" class="btn back-btn">Назад</button>
+    </div>
+</div>
+<script src="js/script.js"></script>
+<script src="js/completed-tasks.js"></script>
+</body>
+</html>

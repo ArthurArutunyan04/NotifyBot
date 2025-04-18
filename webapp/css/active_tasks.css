@@ -1,0 +1,22 @@
+.task-item {
+    position: relative;
+    padding-right: 50px;
+}
+
+.complete-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+}
+
+.due-date {
+    color: #D32F2F;
+    font-weight: bold;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 15ch; }
+}

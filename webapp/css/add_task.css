@@ -1,0 +1,30 @@
+.form-container {
+    margin-top: 30px;
+}
+
+.submit-btn {
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 18px;
+    margin-left: 20%;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+@keyframes typing {
+    from { width: 0; }
+    to { width: 17ch; }
+}
+
+
+
+@media (max-width: 768px) {
+    .submit-btn {
+        margin-left: 5%;
+    }
+}
+
+

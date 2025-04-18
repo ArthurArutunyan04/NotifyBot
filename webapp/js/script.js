@@ -40,6 +40,30 @@ function setupMobileBrowser() {
     document.getElementById('title').textContent = 'Откройте в Telegram';
 }
 
-function setupDesktopBrowser() {
-    document.getElementById('title').textContent = 'Сканируйте QR-код';
+window.navigateTo = function(page) {
+    if (window.Telegram && Telegram.WebApp) {
+        handleTelegramNavigation(page);
+    } else {
+        handleBrowserNavigation(page);
+    }
+};
+
+function handleTelegramNavigation(page) {
+    const webApp = Telegram.WebApp;
+
+    if (page === 'index.html') {
+        webApp.close();
+    } else {
+        webApp.openLink(getFullUrl(page));
+    }
 }
+
+function handleBrowserNavigation(page) {
+    window.location.href = page;
+}
+
+function getFullUrl(page) {
+    const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
+    return `${baseUrl}/${page}`;
+}
+
