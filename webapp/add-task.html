@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить задачу - NotifyBot</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/add_task.css">
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <div class="bot-name-container">
+            <h1 class="bot-name">Добавить задачу</h1>
+        </div>
+    </header>
+
+    <div class="content">
+        <div class="form-container">
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Название задачи</label>
+                    <input type="text" id="taskTitle" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDescription">Описание</label>
+                    <textarea id="taskDescription" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDueDate">Срок выполнения</label>
+                    <input type="date" id="taskDueDate" min="">
+                </div>
+
+                <button type="submit" class="btn submit-btn">Добавить задачу</button>
+            </form>
+        </div>
+
+        <button onclick="navigateTo('index.html')" class="btn back-btn">Назад</button>
+    </div>
+</div>
+<script src="js/script.js"></script>
+<script src="js/add-task.js"></script>
+</body>
+</html>

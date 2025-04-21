@@ -1,0 +1,11 @@
+CREATE SCHEMA IF NOT EXISTS public;
+
+CREATE TABLE public.tasks (
+    id BIGSERIAL PRIMARY KEY,
+    title CHARACTER VARYING(255) NOT NULL,
+    description CHARACTER VARYING(255),
+    created_at DATE NOT NULL,
+    deadline DATE NOT NULL,
+    status CHARACTER VARYING(255) NOT NULL,
+    created_by BIGINT NOT NULL
+);

@@ -1,0 +1,3 @@
+2025-04-10T23:49:26.501+03:00  INFO 23947 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : Starting TelegramBotApplicationTests using Java 17.0.14 with PID 23947 (started by artur in /home/artur/IdeaProjects/NotifyTaskBot/telegram-bot)
+2025-04-10T23:49:26.503+03:00  INFO 23947 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : No active profile set, falling back to 1 default profile: "default"
+2025-04-10T23:49:27.600+03:00  INFO 23947 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : Started TelegramBotApplicationTests in 1.589 seconds (process running for 3.079)

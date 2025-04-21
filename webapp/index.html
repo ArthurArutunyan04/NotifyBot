@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NotifyBot</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-container">
+    <header>
+        <div class="bot-name-container">
+            <h1 class="bot-name">NotifyBot<span class="checkmark">✓</span></h1>
+        </div>
+    </header>
+
+    <div class="content">
+        <!-- Telegram WebApp -->
+        <div class="tg-content" id="tgContent">
+            <div class="button-container">
+                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
+                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Посмотреть текущие задачи</button>
+                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Список выполненных задач</button>
+<!--                <button class="action-btn" onclick="navigateTo('analytics.html')">Получить аналитику</button>-->
+            </div>
+            <button id="tgBackBtn" class="btn telegram-btn back-button">← Назад в бот</button>
+        </div>
+
+        <!-- Mobile browser -->
+        <div class="mobile-content" id="mobileContent">
+            <div class="button-container">
+                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
+                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Посмотреть текущие задачи</button>
+                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Список выполненных задач</button>
+<!--                <button class="action-btn" onclick="navigateTo('analytics.html')">Получить аналитику</button>-->
+            </div>
+            <a href="https://t.me/macanswag_bot" class="btn mobile-btn back-button">Открыть бота</a>
+        </div>
+
+        <!-- Desktop browser -->
+        <div class="desktop-content" id="desktopContent">
+            <div class="button-container">
+                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
+                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Посмотреть текущие задачи</button>
+                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Список выполненных задач</button>
+                <button class="action-btn" onclick="navigateTo('analytics.html')">Получить аналитику</button>
+            </div>
+            <a href="https://t.me/macanswag_bot" class="btn mobile-btn back-button">Открыть бота</a>
+        </div>
+    </div>
+</div>
+<script src="js/script.js"></script>
+</body>
+</html>
