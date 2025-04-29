@@ -36,3 +36,26 @@ Caused by: org.springframework.context.annotation.ConflictingBeanDefinitionExcep
 2025-04-30T02:12:46.962+03:00 DEBUG 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
 2025-04-30T02:12:46.964+03:00  INFO 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
 2025-04-30T02:12:48.140+03:00  INFO 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.764 seconds (process running for 2.381)
+2025-04-30T02:17:02.464+03:00 ERROR 48935 --- [notify-bot] [MacanSwag_bot Telegram Connection] o.t.t.u.DefaultBotSession                : api.telegram.org:443 failed to respond
+
+org.apache.http.NoHttpResponseException: api.telegram.org:443 failed to respond
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:141) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.conn.DefaultHttpResponseParser.parseHead(DefaultHttpResponseParser.java:56) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:259) ~[httpcore-4.4.16.jar:4.4.16]
+	at org.apache.http.impl.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:163) ~[httpcore-4.4.16.jar:4.4.16]
+	at org.apache.http.impl.conn.CPoolProxy.receiveResponseHeader(CPoolProxy.java:157) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.protocol.HttpRequestExecutor.doReceiveResponse(HttpRequestExecutor.java:273) ~[httpcore-4.4.16.jar:4.4.16]
+	at org.apache.http.protocol.HttpRequestExecutor.execute(HttpRequestExecutor.java:125) ~[httpcore-4.4.16.jar:4.4.16]
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:272) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:186) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:89) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:185) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:83) ~[httpclient-4.5.14.jar:4.5.14]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:249) ~[telegrambots-6.9.7.1.jar:na]
+	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.9.7.1.jar:na]
+
+2025-04-30T02:30:14.096+03:00  INFO 52140 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 52140 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
+2025-04-30T02:30:14.100+03:00 DEBUG 52140 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-30T02:30:14.102+03:00  INFO 52140 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-04-30T02:30:15.327+03:00  INFO 52140 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.855 seconds (process running for 2.469)

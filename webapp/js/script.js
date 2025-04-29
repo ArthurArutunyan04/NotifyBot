@@ -98,27 +98,37 @@ function initMainPage() {
 }
 
 async function checkAuth() {
-    if (!localStorage.getItem('jwt') && APP_CONFIG.PLATFORM === 'tg') {
-        await authenticateTelegram();
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        try {
+            if (!Telegram.WebApp.initData) {
+                throw new Error("Telegram auth data not available");
+            }
+
+            if (!localStorage.getItem('jwt')) {
+                await authenticateTelegram();
+            }
+
+            await validateToken();
+        } catch (error) {
+            console.error("Auth check failed:", error);
+            showAlert("Ошибка авторизации. Пожалуйста, перезайдите в бота.");
+            if (APP_CONFIG.PLATFORM === 'tg') {
+                Telegram.WebApp.close();
+            }
+        }
     }
 }
 
 async function authenticateTelegram() {
-    if (!window.Telegram?.WebApp?.initData) {
-        console.warn('Telegram WebApp data not available');
-        return;
-    }
+    const tgData = Telegram.WebApp.initData;
+    const user = Telegram.WebApp.initDataUnsafe.user;
 
     try {
-        const initData = Telegram.WebApp.initData;
-        const user = Telegram.WebApp.initDataUnsafe.user;
-
         const response = await apiRequest('/auth/telegram', 'POST', {
             id: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
             username: user.username,
-            photoUrl: user.photo_url,
             authDate: Telegram.WebApp.initDataUnsafe.auth_date,
             hash: Telegram.WebApp.initDataUnsafe.hash
         });
@@ -126,16 +136,22 @@ async function authenticateTelegram() {
         localStorage.setItem('jwt', response.token);
         localStorage.setItem('user', JSON.stringify({
             id: user.id,
-            username: user.username,
-            name: [user.first_name, user.last_name].filter(Boolean).join(' ')
+            username: user.username
         }));
 
         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        return true;
     } catch (error) {
-        console.error('Auth error:', error);
-        showAlert('Ошибка авторизации. Попробуйте снова.');
-        return false;
+        console.error("Auth failed:", error);
+        throw new Error("Не удалось авторизоваться");
+    }
+}
+
+async function validateToken() {
+    try {
+        await apiRequest('/auth/validate', 'GET');
+    } catch (error) {
+        localStorage.removeItem('jwt');
+        throw new Error("Токен недействителен");
     }
 }
 
