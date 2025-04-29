@@ -1,55 +1,38 @@
-2025-04-10T23:45:45.558+03:00  INFO 22701 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 22701 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
-2025-04-10T23:45:45.562+03:00  INFO 22701 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
-2025-04-10T23:45:46.745+03:00  INFO 22701 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.886 seconds (process running for 2.665)
-2025-04-10T23:47:51.791+03:00  INFO 23242 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : Starting TelegramBotApplicationTests using Java 17.0.14 with PID 23242 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
-2025-04-10T23:47:51.795+03:00  INFO 23242 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : No active profile set, falling back to 1 default profile: "default"
-2025-04-10T23:47:52.880+03:00  INFO 23242 --- [telegram-bot] [main] c.e.t.TelegramBotApplicationTests        : Started TelegramBotApplicationTests in 1.812 seconds (process running for 2.438)
-2025-04-10T23:50:06.507+03:00  INFO 24075 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 24075 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
-2025-04-10T23:50:06.511+03:00  INFO 24075 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
-2025-04-10T23:50:07.674+03:00  INFO 24075 --- [telegram-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.836 seconds (process running for 2.448)
-2025-04-11T01:36:00.357+03:00  INFO 39902 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 39902 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
-2025-04-11T01:36:00.360+03:00  INFO 39902 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
-2025-04-11T01:36:01.368+03:00  INFO 39902 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.692 seconds (process running for 2.62)
-2025-04-11T01:36:22.437+03:00 ERROR 39902 --- [notify-bot] [MacanSwag_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
+2025-04-30T01:48:34.419+03:00  INFO 46265 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 46265 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
+2025-04-30T01:48:34.425+03:00 DEBUG 46265 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-30T01:48:34.426+03:00  INFO 46265 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-04-30T01:48:34.575+03:00  WARN 46265 --- [notify-bot] [main] s.c.a.AnnotationConfigApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [com.example.telegrambot.TelegramBotApplication]
+2025-04-30T01:48:34.604+03:00 ERROR 46265 --- [notify-bot] [main] o.s.boot.SpringApplication               : Application run failed
 
-java.lang.NullPointerException: Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-	at com.example.telegrambot.handler.commands.WebsiteCommand.execute(WebsiteCommand.java:15) ~[classes/:na]
-	at com.example.telegrambot.handler.CommandHandler.handleCommand(CommandHandler.java:27) ~[classes/:na]
-	at com.example.telegrambot.NotifyBot.onUpdateReceived(NotifyBot.java:40) ~[classes/:na]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.9.7.1.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.9.7.1.jar:na]
+org.springframework.beans.factory.BeanDefinitionStoreException: Failed to parse configuration class [com.example.telegrambot.TelegramBotApplication]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:193) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:418) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:290) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:349) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:118) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:791) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:609) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.4.4.jar:3.4.4]
+	at com.example.telegrambot.TelegramBotApplication.main(TelegramBotApplication.java:13) ~[classes/:na]
+Caused by: org.springframework.context.annotation.ConflictingBeanDefinitionException: Annotation-specified bean name 'webAppCommand' for bean class [com.example.telegrambot.handler.commands.WebAppCommand] conflicts with existing, non-compatible bean definition of same name and class [com.example.telegrambot.BotConfig.WebAppCommand]
+	at org.springframework.context.annotation.ClassPathBeanDefinitionScanner.checkCandidate(ClassPathBeanDefinitionScanner.java:361) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ClassPathBeanDefinitionScanner.doScan(ClassPathBeanDefinitionScanner.java:288) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ComponentScanAnnotationParser.parse(ComponentScanAnnotationParser.java:128) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassParser.doProcessConfigurationClass(ConfigurationClassParser.java:345) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassParser.processConfigurationClass(ConfigurationClassParser.java:280) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:203) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.annotation.ConfigurationClassParser.parse(ConfigurationClassParser.java:172) ~[spring-context-6.2.5.jar:6.2.5]
+	... 12 common frames omitted
 
-2025-04-11T01:36:41.261+03:00 ERROR 39902 --- [notify-bot] [MacanSwag_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-
-java.lang.NullPointerException: Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-	at com.example.telegrambot.handler.commands.WebsiteCommand.execute(WebsiteCommand.java:15) ~[classes/:na]
-	at com.example.telegrambot.handler.CommandHandler.handleCommand(CommandHandler.java:27) ~[classes/:na]
-	at com.example.telegrambot.NotifyBot.onUpdateReceived(NotifyBot.java:40) ~[classes/:na]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.9.7.1.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.9.7.1.jar:na]
-
-2025-04-11T01:39:21.422+03:00  INFO 40703 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 40703 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
-2025-04-11T01:39:21.426+03:00  INFO 40703 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
-2025-04-11T01:39:22.409+03:00  INFO 40703 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.579 seconds (process running for 2.208)
-2025-04-11T01:39:31.324+03:00 ERROR 40703 --- [notify-bot] [MacanSwag_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-
-java.lang.NullPointerException: Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-	at com.example.telegrambot.handler.commands.WebsiteCommand.execute(WebsiteCommand.java:15) ~[classes/:na]
-	at com.example.telegrambot.handler.CommandHandler.handleCommand(CommandHandler.java:27) ~[classes/:na]
-	at com.example.telegrambot.NotifyBot.onUpdateReceived(NotifyBot.java:40) ~[classes/:na]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.9.7.1.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.9.7.1.jar:na]
-
-2025-04-11T01:39:36.672+03:00 ERROR 40703 --- [notify-bot] [MacanSwag_bot Telegram Executor] o.t.t.u.DefaultBotSession                : Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-
-java.lang.NullPointerException: Cannot invoke "String.startsWith(String)" because "this.websiteUrl" is null
-	at com.example.telegrambot.handler.commands.WebsiteCommand.execute(WebsiteCommand.java:15) ~[classes/:na]
-	at com.example.telegrambot.handler.CommandHandler.handleCommand(CommandHandler.java:27) ~[classes/:na]
-	at com.example.telegrambot.NotifyBot.onUpdateReceived(NotifyBot.java:40) ~[classes/:na]
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511) ~[na:na]
-	at org.telegram.telegrambots.meta.generics.LongPollingBot.onUpdatesReceived(LongPollingBot.java:27) ~[telegrambots-meta-6.9.7.1.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$HandlerThread.run(DefaultBotSession.java:312) ~[telegrambots-6.9.7.1.jar:na]
-
+2025-04-30T01:49:55.022+03:00  INFO 46610 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 46610 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
+2025-04-30T01:49:55.025+03:00 DEBUG 46610 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-30T01:49:55.026+03:00  INFO 46610 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-04-30T01:49:56.057+03:00  INFO 46610 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.668 seconds (process running for 2.278)
+2025-04-30T02:12:46.959+03:00  INFO 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 48935 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
+2025-04-30T02:12:46.962+03:00 DEBUG 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-04-30T02:12:46.964+03:00  INFO 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-04-30T02:12:48.140+03:00  INFO 48935 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.764 seconds (process running for 2.381)

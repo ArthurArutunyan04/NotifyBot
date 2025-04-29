@@ -257,3 +257,11 @@ body.platform-desktop .desktop-content {
     transform: translateX(-50%);
     background-color: #1565C0;
 }
+
+.content {
+    transition: opacity 0.3s ease;
+}
+
+.content.page-transition {
+    opacity: 0;
+}

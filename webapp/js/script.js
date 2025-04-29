@@ -1,69 +1,175 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const platform = detectPlatform();
-    document.body.classList.add('platform-' + platform);
+const APP_CONFIG = {
+    API_BASE_URL: '/api/v1',
+    PLATFORM: detectPlatform()
+};
 
-    if (platform === 'tg') {
-        setupTelegramWebApp();
-    } else if (platform === 'mobile') {
-        setupMobileBrowser();
-    } else {
-        setupDesktopBrowser();
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    initPlatform();
+    setupNavigation();
+    checkAuth();
+    loadCurrentPage();
 });
 
 function detectPlatform() {
-    if (window.Telegram && Telegram.WebApp) {
-        return 'tg';
-    }
-
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        return 'mobile';
-    }
-
-    return 'desktop';
+    if (window.Telegram && Telegram.WebApp) return 'tg';
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        ? 'mobile'
+        : 'desktop';
 }
 
-function setupTelegramWebApp() {
-    const webApp = Telegram.WebApp;
+function initPlatform() {
+    document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
 
-    const backBtn = document.getElementById('tgBackBtn');
-    if (backBtn) {
-        backBtn.addEventListener('click', function() {
-            webApp.close();
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        const webApp = Telegram.WebApp;
+        webApp.ready();
+        webApp.expand();
+
+        webApp.BackButton.show();
+        webApp.BackButton.onClick(() => {
+            if (window.history.length > 1) {
+                history.back();
+            } else {
+                webApp.close();
+            }
         });
     }
-
-    document.getElementById('title').textContent = 'Привет в Telegram!';
 }
 
-function setupMobileBrowser() {
-    document.getElementById('title').textContent = 'Откройте в Telegram';
+function setupNavigation() {
+    window.navigateTo = function(page) {
+        if (APP_CONFIG.PLATFORM === 'tg') {
+            history.pushState(null, '', page);
+            loadPageContent(page);
+        } else {
+            window.location.href = page;
+        }
+    };
+
+    window.addEventListener('popstate', function() {
+        loadPageContent(window.location.pathname);
+    });
 }
 
-window.navigateTo = function(page) {
-    if (window.Telegram && Telegram.WebApp) {
-        handleTelegramNavigation(page);
-    } else {
-        handleBrowserNavigation(page);
+function loadCurrentPage() {
+    loadPageContent(window.location.pathname);
+}
+
+async function loadPageContent(path) {
+    try {
+        const pageToLoad = path === '/' ? '/index.html' : path;
+        const response = await fetch(pageToLoad);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        document.querySelector('.app-container').innerHTML =
+            doc.querySelector('.app-container').innerHTML;
+
+        initPageScripts(path);
+
+        initPlatform();
+    } catch (error) {
+        console.error('Failed to load page:', error);
+        showAlert('Ошибка загрузки страницы');
     }
-};
+}
 
-function handleTelegramNavigation(page) {
-    const webApp = Telegram.WebApp;
+function initPageScripts(path) {
+    const pageScripts = {
+        '/': initMainPage,
+        '/index.html': initMainPage,
+        '/add-task.html': initAddTaskPage,
+        '/active-tasks.html': initActiveTasksPage,
+        '/completed-tasks.html': initCompletedTasksPage
+    };
 
-    if (page === 'index.html') {
-        webApp.close();
-    } else {
-        webApp.openLink(getFullUrl(page));
+    const pageKey = Object.keys(pageScripts).find(key =>
+        path.endsWith(key)
+    );
+
+    if (pageKey && pageScripts[pageKey]) {
+        pageScripts[pageKey]();
     }
 }
 
-function handleBrowserNavigation(page) {
-    window.location.href = page;
+function initMainPage() {
+    console.log('Main page initialized');
 }
 
-function getFullUrl(page) {
-    const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
-    return `${baseUrl}/${page}`;
+async function checkAuth() {
+    if (!localStorage.getItem('jwt') && APP_CONFIG.PLATFORM === 'tg') {
+        await authenticateTelegram();
+    }
 }
 
+async function authenticateTelegram() {
+    if (!window.Telegram?.WebApp?.initData) {
+        console.warn('Telegram WebApp data not available');
+        return;
+    }
+
+    try {
+        const initData = Telegram.WebApp.initData;
+        const user = Telegram.WebApp.initDataUnsafe.user;
+
+        const response = await apiRequest('/auth/telegram', 'POST', {
+            id: user.id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            username: user.username,
+            photoUrl: user.photo_url,
+            authDate: Telegram.WebApp.initDataUnsafe.auth_date,
+            hash: Telegram.WebApp.initDataUnsafe.hash
+        });
+
+        localStorage.setItem('jwt', response.token);
+        localStorage.setItem('user', JSON.stringify({
+            id: user.id,
+            username: user.username,
+            name: [user.first_name, user.last_name].filter(Boolean).join(' ')
+        }));
+
+        Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        return true;
+    } catch (error) {
+        console.error('Auth error:', error);
+        showAlert('Ошибка авторизации. Попробуйте снова.');
+        return false;
+    }
+}
+
+async function apiRequest(endpoint, method = 'GET', body = null) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+
+    const token = localStorage.getItem('jwt');
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const response = await fetch(`${APP_CONFIG.API_BASE_URL}${endpoint}`, {
+        method,
+        headers,
+        body: body ? JSON.stringify(body) : null
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Request failed');
+    }
+
+    return response.json();
+}
+
+function showAlert(message) {
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        Telegram.WebApp.showAlert(message);
+    } else {
+        alert(message);
+    }
+}
+
+window.apiRequest = apiRequest;
+window.showAlert = showAlert;
+window.navigateTo = navigateTo;

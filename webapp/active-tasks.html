@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Текущие задачи - NotifyBot</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/active_tasks.css">
+    <link rel="stylesheet" href="css/tasks.css">
 </head>
 <body>
 <div class="app-container">
@@ -16,20 +16,15 @@
     </header>
 
     <div class="content">
+        <div id="loader" class="loader"></div>
         <div class="tasks-container" id="activeTasksContainer">
-            <div class="task-item">
-                <h3>Пример задачи</h3>
-                <p>Описание задачи</p>
-                <div class="task-meta">
-                    <span class="due-date">До: 31.12.2023</span>
-                    <button class="btn complete-btn">✓</button>
-                </div>
-            </div>
         </div>
-
-        <button onclick="navigateTo('index.html')" class="btn back-btn">Назад</button>
+        <button onclick="navigateTo('index.html')" class="btn back-btn">На главную</button>
     </div>
 </div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="js/api.js"></script>
 <script src="js/script.js"></script>
 <script src="js/active-tasks.js"></script>
 </body>

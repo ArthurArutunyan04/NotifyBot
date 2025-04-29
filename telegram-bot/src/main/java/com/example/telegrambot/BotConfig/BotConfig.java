@@ -25,3 +25,4 @@ public class BotConfig {
         this.username = username;
     }
 }
+

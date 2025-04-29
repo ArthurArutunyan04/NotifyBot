@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Добавить задачу - NotifyBot</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/add_task.css">
+    <link rel="stylesheet" href="css/form.css">
 </head>
 <body>
 <div class="app-container">
@@ -19,7 +19,7 @@
         <div class="form-container">
             <form id="taskForm">
                 <div class="form-group">
-                    <label for="taskTitle">Название задачи</label>
+                    <label for="taskTitle">Название задачи*</label>
                     <input type="text" id="taskTitle" required>
                 </div>
 
@@ -29,17 +29,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="taskDueDate">Срок выполнения</label>
-                    <input type="date" id="taskDueDate" min="">
+                    <label for="taskDueDate">Срок выполнения*</label>
+                    <input type="date" id="taskDueDate" required>
                 </div>
 
                 <button type="submit" class="btn submit-btn">Добавить задачу</button>
             </form>
         </div>
 
-        <button onclick="navigateTo('index.html')" class="btn back-btn">Назад</button>
+        <button onclick="navigateTo('index.html')" class="btn back-btn">На главную</button>
     </div>
 </div>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="js/api.js"></script>
 <script src="js/script.js"></script>
 <script src="js/add-task.js"></script>
 </body>
