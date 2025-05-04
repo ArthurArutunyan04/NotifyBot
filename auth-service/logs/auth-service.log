@@ -1,10 +1,72 @@
-2025-04-26T23:01:10.342+03:00  INFO 12810 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Starting AuthServiceApplication using Java 21.0.5 with PID 12810 (/home/artur/IdeaProjects/NotifyTaskBot/auth-service/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot/auth-service)
-2025-04-26T23:01:10.344+03:00 DEBUG 12810 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
-2025-04-26T23:01:10.345+03:00  INFO 12810 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : No active profile set, falling back to 1 default profile: "default"
-2025-04-26T23:01:11.435+03:00  INFO 12810 --- [auth-service] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
-2025-04-26T23:01:11.454+03:00  INFO 12810 --- [auth-service] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2025-04-26T23:01:11.455+03:00  INFO 12810 --- [auth-service] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
-2025-04-26T23:01:11.516+03:00  INFO 12810 --- [auth-service] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2025-04-26T23:01:11.517+03:00  INFO 12810 --- [auth-service] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1104 ms
-2025-04-26T23:01:12.109+03:00  INFO 12810 --- [auth-service] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
-2025-04-26T23:01:12.120+03:00  INFO 12810 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Started AuthServiceApplication in 2.325 seconds (process running for 2.665)
+2025-05-04T22:20:51.865+03:00  INFO 78808 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Starting AuthServiceApplication using Java 21.0.5 with PID 78808 (/home/artur/IdeaProjects/NotifyTaskBot/auth-service/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot/auth-service)
+2025-05-04T22:20:51.871+03:00 DEBUG 78808 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-04T22:20:51.873+03:00  INFO 78808 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-05-04T22:20:53.131+03:00  INFO 78808 --- [auth-service] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (https)
+2025-05-04T22:20:53.150+03:00  INFO 78808 --- [auth-service] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-04T22:20:53.151+03:00  INFO 78808 --- [auth-service] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-04T22:20:53.207+03:00  INFO 78808 --- [auth-service] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-04T22:20:53.208+03:00  INFO 78808 --- [auth-service] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1276 ms
+2025-05-04T22:20:54.009+03:00  WARN 78808 --- [auth-service] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-05-04T22:20:54.027+03:00  INFO 78808 --- [auth-service] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-05-04T22:20:54.044+03:00 ERROR 78808 --- [auth-service] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:326) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.DefaultLifecycleProcessor$LifecycleGroup.start(DefaultLifecycleProcessor.java:510) ~[spring-context-6.2.5.jar:6.2.5]
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75) ~[na:na]
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:295) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:240) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:1006) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:630) ~[spring-context-6.2.5.jar:6.2.5]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.4.4.jar:3.4.4]
+	at com.example.authservice.AuthServiceApplication.main(AuthServiceApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.boot.web.server.WebServerException: Unable to start embedded Tomcat server
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:251) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.web.servlet.context.WebServerStartStopLifecycle.start(WebServerStartStopLifecycle.java:44) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.context.support.DefaultLifecycleProcessor.doStart(DefaultLifecycleProcessor.java:323) ~[spring-context-6.2.5.jar:6.2.5]
+	... 13 common frames omitted
+Caused by: java.lang.IllegalArgumentException: standardService.connector.startFailed
+	at org.apache.catalina.core.StandardService.addConnector(StandardService.java:222) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.addPreviouslyRemovedConnectors(TomcatWebServer.java:310) ~[spring-boot-3.4.4.jar:3.4.4]
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:236) ~[spring-boot-3.4.4.jar:3.4.4]
+	... 15 common frames omitted
+Caused by: org.apache.catalina.LifecycleException: Protocol handler start failed
+	at org.apache.catalina.connector.Connector.startInternal(Connector.java:1082) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.catalina.core.StandardService.addConnector(StandardService.java:219) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	... 17 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Alias name [server] does not identify a key entry
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.createSSLContext(AbstractJsseEndpoint.java:114) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.initialiseSsl(AbstractJsseEndpoint.java:70) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.NioEndpoint.bind(NioEndpoint.java:199) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.AbstractEndpoint.bindWithCleanup(AbstractEndpoint.java:1304) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.AbstractEndpoint.start(AbstractEndpoint.java:1390) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.coyote.AbstractProtocol.start(AbstractProtocol.java:644) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.catalina.connector.Connector.startInternal(Connector.java:1079) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	... 19 common frames omitted
+Caused by: java.io.IOException: Alias name [server] does not identify a key entry
+	at org.apache.tomcat.util.net.SSLUtilBase.getKeyManagers(SSLUtilBase.java:376) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.SSLUtilBase.createSSLContext(SSLUtilBase.java:268) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	at org.apache.tomcat.util.net.AbstractJsseEndpoint.createSSLContext(AbstractJsseEndpoint.java:112) ~[tomcat-embed-core-10.1.39.jar:10.1.39]
+	... 25 common frames omitted
+
+2025-05-04T22:25:33.765+03:00  INFO 79620 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Starting AuthServiceApplication using Java 21.0.5 with PID 79620 (/home/artur/IdeaProjects/NotifyTaskBot/auth-service/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot/auth-service)
+2025-05-04T22:25:33.767+03:00 DEBUG 79620 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-04T22:25:33.768+03:00  INFO 79620 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-05-04T22:25:34.913+03:00  INFO 79620 --- [auth-service] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8082 (https)
+2025-05-04T22:25:34.930+03:00  INFO 79620 --- [auth-service] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-05-04T22:25:34.931+03:00  INFO 79620 --- [auth-service] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.39]
+2025-05-04T22:25:34.980+03:00  INFO 79620 --- [auth-service] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-05-04T22:25:34.980+03:00  INFO 79620 --- [auth-service] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1158 ms
+2025-05-04T22:25:35.846+03:00  INFO 79620 --- [auth-service] [main] o.a.t.util.net.NioEndpoint.certificate   : Connector [https-jsse-nio-8082], TLS virtual host [_default_], certificate type [UNDEFINED] configured from keystore [/home/artur/.keystore] using alias [localhost] with trust store [null]
+2025-05-04T22:25:35.859+03:00  INFO 79620 --- [auth-service] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8082 (https) with context path '/'
+2025-05-04T22:25:35.869+03:00  INFO 79620 --- [auth-service] [main] c.e.authservice.AuthServiceApplication   : Started AuthServiceApplication in 2.618 seconds (process running for 2.952)
+2025-05-04T22:39:43.497+03:00  INFO 79620 --- [auth-service] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-05-04T22:39:43.507+03:00  INFO 79620 --- [auth-service] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete

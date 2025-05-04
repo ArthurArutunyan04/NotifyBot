@@ -39,28 +39,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Отключаем CSRF для API (или настраиваем точечно)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // Настройка CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // Настройка авторизации запросов
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 )
 
-                // Настройка сессий (без состояния)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // Добавляем JWT фильтр
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class)
 
-                // Настройка обработки исключений
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint((request, response, ex) -> {
                             response.sendError(
@@ -79,14 +73,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Конфигурация CORS
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("*")); // В продакшене укажите конкретные домены
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(List.of(
+                "https://notify-task-bot.onrender.com",
+                "https://web.telegram.org"
+        ));
+        configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of("Authorization", "X-User-Id"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

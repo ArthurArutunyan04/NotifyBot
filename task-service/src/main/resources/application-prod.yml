@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:postgres}:5432/${DB_NAME:task_db}
+    username: ${DB_USER:taskuser}
+    password: ${DB_PASSWORD:password123}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate

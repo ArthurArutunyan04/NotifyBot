@@ -20,10 +20,9 @@ public class JwtConfig {
 
     @Bean
     public JwtTokenProvider jwtTokenProvider() {
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-        String base64Key = Encoders.BASE64.encode(key.getEncoded());
-        System.out.println("Generated JWT Key: " + base64Key);
-
+//        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//        String base64Key = Encoders.BASE64.encode(key.getEncoded());
+//        System.out.println("Generated JWT Key: " + base64Key);
         return new JwtTokenProvider(secret, expiration);
     }
 }

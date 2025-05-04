@@ -20,26 +20,23 @@ async function apiRequest(url, method = 'GET', body = null) {
 
     if (body) options.body = JSON.stringify(body);
 
-    const response = await fetch(`/api/v1${url}`, options);
+    console.log("Making request to:", url, "with options:", options);
 
-    if (!response.ok) {
-        let errorMsg = 'Ошибка сервера';
-        try {
-            const errorData = await response.json();
-            errorMsg = errorData.message || errorMsg;
+    try {
+        const response = await fetch(`/api/v1${url}`, options);
+        console.log("Response status:", response.status);
 
-            // Если токен невалидный - очищаем хранилище
-            if (response.status === 401) {
-                localStorage.removeItem('jwt');
-                localStorage.removeItem('user');
-            }
-        } catch (e) {
-            console.warn('Failed to parse error response', e);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.error("API Error:", errorData);
+            throw new ApiError(errorData.message || 'Request failed', response.status);
         }
-        throw new ApiError(errorMsg, response.status);
-    }
 
-    return response.json();
+        return response.json();
+    } catch (error) {
+        console.error("Network error:", error);
+        throw new ApiError('Network error', 500);
+    }
 }
 
 window.apiRequest = apiRequest;

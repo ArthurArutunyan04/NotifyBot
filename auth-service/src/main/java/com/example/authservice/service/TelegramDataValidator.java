@@ -2,6 +2,7 @@ package com.example.authservice.service;
 
 import com.example.authservice.dto.TelegramAuthRequest;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
 public class TelegramDataValidator {
     @Value("${telegram.bot.token}")
     private String botToken;
@@ -22,10 +24,17 @@ public class TelegramDataValidator {
     public boolean validate(TelegramAuthRequest request) {
         try {
             String dataCheckString = buildDataCheckString(request);
+            log.info("DataCheckString: {}", dataCheckString);
+
             String secretKey = sha256(botToken);
+            log.info("SecretKey: {}", secretKey);
+
             String computedHash = hmacSha256(secretKey, dataCheckString);
+            log.info("ComputedHash: {}, ReceivedHash: {}", computedHash, request.getHash());
+
             return computedHash.equals(request.getHash());
         } catch (Exception e) {
+            log.error("Validation error", e);
             return false;
         }
     }

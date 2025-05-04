@@ -20,17 +20,19 @@ public class AuthController {
 
     @PostMapping("/telegram")
     public ResponseEntity<AuthResponse> authenticate(
-            @RequestBody TelegramAuthRequest request,
-            @RequestHeader(value = "User-Agent", required = false) String userAgent) {
+            @RequestBody TelegramAuthRequest request) {
 
-        log.info("Auth request from: {}", userAgent != null ? userAgent : "unknown client");
+        log.info("Auth request for user: {}", request.getUsername());
+        log.debug("Full auth request: {}", request);
 
         if (!validator.validate(request)) {
-            log.warn("Invalid Telegram data for user: {}", request.getUsername());
-            throw new InvalidTelegramDataException("Invalid authentication data");
+            log.error("Validation failed for user: {}", request.getUsername());
+            throw new InvalidTelegramDataException("Invalid Telegram auth data");
         }
 
         AuthResponse response = authService.authenticate(request);
+        log.info("Auth successful for user: {}", request.getUsername());
+
         return ResponseEntity.ok(response);
     }
 }

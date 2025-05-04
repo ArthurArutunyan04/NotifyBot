@@ -4,6 +4,21 @@ const APP_CONFIG = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded");
+    try {
+        if (window.Telegram && Telegram.WebApp) {
+            console.log("Telegram WebApp detected");
+            console.log("InitData:", Telegram.WebApp.initData);
+            console.log("User:", Telegram.WebApp.initDataUnsafe?.user);
+        }
+        initPlatform();
+        setupNavigation();
+        checkAuth().catch(e => console.error("Auth error:", e));
+    } catch (e) {
+        console.error("Initialization error:", e);
+        showAlert("Critical error: " + e.message);
+    }
+
     initPlatform();
     setupNavigation();
     checkAuth();
