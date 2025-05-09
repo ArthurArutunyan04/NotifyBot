@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Database
   postgres:
     image: postgres:15-alpine
     container_name: postgres
@@ -19,13 +18,11 @@ services:
     networks:
       - backend
 
-  # Kafka
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
     networks:
       - backend
 
@@ -37,115 +34,82 @@ services:
     environment:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-    ports:
-      - "9092:9092"
-    healthcheck:
-      test: ["CMD-SHELL", "kafka-topics --bootstrap-server kafka:9092 --list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     networks:
       - backend
 
-  # Services
   auth-service:
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
+    build: ./auth-service
     container_name: auth-service
-    ports:
-      - "8081:8081"
     environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
+      SPRING_PROFILES_ACTIVE: prod
       DB_HOST: postgres
-      JWT_SECRET: ${JWT_SECRET:-yourVerySecretKey123456789013377}
+      JWT_SECRET: ${JWT_SECRET}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - backend
-    restart: unless-stopped
 
   task-service:
-    build:
-      context: ./task-service
-      dockerfile: Dockerfile
+    build: ./task-service
     container_name: task-service
-    ports:
-      - "8082:8082"
     environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
+      SPRING_PROFILES_ACTIVE: prod
       DB_HOST: postgres
-    depends_on:
-      - postgres
-      - kafka
-    networks:
-      - backend
-    restart: unless-stopped
-
-  notification-service:
-    build:
-      context: ./notification-service
-      dockerfile: Dockerfile
-    container_name: notification-service
-    ports:
-      - "8083:8083"
-    environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
     depends_on:
+      - postgres
       - kafka
     networks:
       - backend
-    restart: unless-stopped
 
-  analytics-service:
-    build:
-      context: ./analytics-service
-      dockerfile: Dockerfile
-    container_name: analytics-service
-    ports:
-      - "8084:8084"
-    environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
-      DB_HOST: postgres
-    depends_on:
-      - postgres
-    networks:
-      - backend
-    restart: unless-stopped
+#  notification-service:
+#    build: ./notification-service
+#    container_name: notification-service
+#    environment:
+#      SPRING_PROFILES_ACTIVE: prod
+#      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+#      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+#    depends_on:
+#      - kafka
+#    networks:
+#      - backend
+#
+#  analytics-service:
+#    build: ./analytics-service
+#    container_name: analytics-service
+#    environment:
+#      SPRING_PROFILES_ACTIVE: prod
+#      DB_HOST: postgres
+#    depends_on:
+#      - postgres
+#    networks:
+#      - backend
 
   telegram-bot:
-    build:
-      context: ./telegram-bot
-      dockerfile: Dockerfile
+    build: ./telegram-bot
     container_name: telegram-bot
     ports:
       - "8085:8085"
     environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8085
       API_BASE_URL: http://api-gateway:8080
       BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
     depends_on:
       - api-gateway
     networks:
       - backend
-    restart: unless-stopped
 
   api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+    build: ./api-gateway
     container_name: api-gateway
     ports:
       - "8080:8080"
     environment:
-      SPRING_PROFILES_ACTIVE: prod,docker
-      JWT_SECRET: ${JWT_SECRET:-yourVerySecretKey123456789013377}
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - auth-service
       - task-service
@@ -153,30 +117,24 @@ services:
       - analytics-service
     networks:
       - backend
-    restart: unless-stopped
 
-  # Monitoring
-  prometheus:
-    image: prom/prometheus:latest
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
     ports:
-      - "9090:9090"
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    networks:
-      - backend
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - api-gateway
+      - telegram-bot
     networks:
       - backend
 
 volumes:
   postgres_data:
-  grafana_data:
 
 networks:
   backend:
