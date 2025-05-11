@@ -112,18 +112,6 @@ services:
     networks:
       - backend
 
-  frontend:
-    image: nginx:alpine
-    container_name: frontend
-    volumes:
-      - ./webapp:/usr/share/nginx/html:ro
-      - ./nginx/conf.d/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    depends_on:
-      - api-gateway
-    networks:
-      - backend
-
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -132,11 +120,11 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./webapp:/usr/share/nginx/html:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - api-gateway
       - telegram-bot
-      - frontend
     networks:
       - backend
 
