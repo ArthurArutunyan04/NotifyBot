@@ -118,6 +118,7 @@ services:
     volumes:
       - ./webapp:/usr/share/nginx/html:ro
       - ./nginx/conf.d/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - api-gateway
     networks:
