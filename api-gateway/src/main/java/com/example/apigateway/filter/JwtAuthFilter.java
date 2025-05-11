@@ -8,12 +8,16 @@ import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.util.List;
 
 @Component
 public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Config> {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -25,18 +29,20 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+            String path = exchange.getRequest().getPath().value();
+            logger.info("Processing request to path: {}", path);
 
-            if (token == null || !token.startsWith("Bearer ")) {
-                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-                return exchange.getResponse().setComplete();
-            }
-
-            if (exchange.getRequest().getPath().value().startsWith("/api/v1/auth")) {
+            if (path.startsWith("/api/v1/auth/") || path.startsWith("/actuator/")) {
+                logger.info("Skipping JWT validation for path: {}", path);
                 return chain.filter(exchange);
             }
 
-
+            String token = exchange.getRequest().getHeaders().getFirst("Authorization");
+            if (token == null || !token.startsWith("Bearer ")) {
+                logger.warn("No valid Authorization header for path: {}", path);
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                return exchange.getResponse().setComplete();
+            }
 
             try {
                 SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -47,10 +53,12 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                         .getBody();
 
                 String userId = claims.getSubject();
+                logger.info("Valid JWT for userId: {}", userId);
                 exchange.getRequest().mutate()
                         .header("X-User-Id", userId)
                         .build();
             } catch (Exception e) {
+                logger.error("Invalid JWT for path: {}, error: {}", path, e.getMessage());
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return exchange.getResponse().setComplete();
             }
