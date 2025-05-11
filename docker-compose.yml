@@ -1,136 +1,157 @@
+version: '3.8'
 services:
   postgres:
     image: postgres:15-alpine
     container_name: postgres
     environment:
-      POSTGRES_USER: ${DB_USER:-taskuser}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-password123}
-      POSTGRES_DB: ${DB_NAME:-task_db}
+      - POSTGRES_USER=taskuser
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=task_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U taskuser -d task_db"]
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - backend
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-    networks:
-      - backend
-
-  kafka:
-    image: confluentinc/cp-kafka:7.4.0
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-    networks:
-      - backend
+    restart: unless-stopped
 
   auth-service:
     build: ./auth-service
     container_name: auth-service
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: postgres
-      JWT_SECRET: ${JWT_SECRET}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
+      - SPRING_DATASOURCE_USERNAME=taskuser
+      - SPRING_DATASOURCE_PASSWORD=password123
+      - JWT_SECRET=yourVerySecretKey123456789013377
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     depends_on:
       postgres:
         condition: service_healthy
     networks:
       - backend
-
-  task-service:
-    build: ./task-service
-    container_name: task-service
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: postgres
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    depends_on:
-      - postgres
-      - kafka
-    networks:
-      - backend
-
-  notification-service:
-    build: ./notification-service
-    container_name: notification-service
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-    depends_on:
-      - kafka
-    networks:
-      - backend
-
-  analytics-service:
-    build: ./analytics-service
-    container_name: analytics-service
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: postgres
-    depends_on:
-      - postgres
-    networks:
-      - backend
-
-  telegram-bot:
-    build: ./telegram-bot
-    container_name: telegram-bot
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SERVER_PORT: 8085
-      API_BASE_URL: http://api-gateway:8080
-      BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-    depends_on:
-      - api-gateway
-    networks:
-      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/api/v1/auth/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      JWT_SECRET: ${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_SECRET=yourVerySecretKey123456789013377
     depends_on:
-      - auth-service
-      - task-service
-      - notification-service
-      - analytics-service
+      auth-service:
+        condition: service_healthy
     networks:
       - backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
     container_name: nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
       - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./webapp:/usr/share/nginx/html:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
-      - api-gateway
-      - telegram-bot
+      api-gateway:
+        condition: service_healthy
     networks:
       - backend
+    restart: unless-stopped
+
+  task-service:
+    build: ./task-service
+    container_name: task-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
+      - SPRING_DATASOURCE_USERNAME=taskuser
+      - SPRING_DATASOURCE_PASSWORD=password123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  telegram-bot:
+    build: ./telegram-bot
+    container_name: telegram-bot
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    depends_on:
+      auth-service:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - kafka
+    networks:
+      - backend
+    restart: unless-stopped
+
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    depends_on:
+      - zookeeper
+    networks:
+      - backend
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    networks:
+      - backend
+    restart: unless-stopped
 
 volumes:
   postgres_data:
 
 networks:
   backend:
-    driver: bridge
+    name: notifybot_backend
