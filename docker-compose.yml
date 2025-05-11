@@ -64,34 +64,32 @@ services:
     networks:
       - backend
 
-#  notification-service:
-#    build: ./notification-service
-#    container_name: notification-service
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-#      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-#    depends_on:
-#      - kafka
-#    networks:
-#      - backend
-#
-#  analytics-service:
-#    build: ./analytics-service
-#    container_name: analytics-service
-#    environment:
-#      SPRING_PROFILES_ACTIVE: prod
-#      DB_HOST: postgres
-#    depends_on:
-#      - postgres
-#    networks:
-#      - backend
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+    depends_on:
+      - kafka
+    networks:
+      - backend
+
+  analytics-service:
+    build: ./analytics-service
+    container_name: analytics-service
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: postgres
+    depends_on:
+      - postgres
+    networks:
+      - backend
 
   telegram-bot:
     build: ./telegram-bot
     container_name: telegram-bot
-    ports:
-      - "8085:8085"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SERVER_PORT: 8085
@@ -105,8 +103,6 @@ services:
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
-    ports:
-      - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       JWT_SECRET: ${JWT_SECRET}
@@ -118,6 +114,17 @@ services:
     networks:
       - backend
 
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    volumes:
+      - ./webapp:/usr/share/nginx/html:ro
+      - ./nginx/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
+    depends_on:
+      - api-gateway
+    networks:
+      - backend
+
   nginx:
     image: nginx:alpine
     container_name: nginx
@@ -126,10 +133,11 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - api-gateway
       - telegram-bot
+      - frontend
     networks:
       - backend
 

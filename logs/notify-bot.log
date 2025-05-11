@@ -2,3 +2,7 @@
 2025-05-08T23:31:09.321+03:00 DEBUG 19376 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
 2025-05-08T23:31:09.323+03:00  INFO 19376 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
 2025-05-08T23:31:10.484+03:00  INFO 19376 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.758 seconds (process running for 2.488)
+2025-05-11T17:36:00.099+03:00  INFO 88517 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Starting TelegramBotApplication using Java 17.0.14 with PID 88517 (/home/artur/IdeaProjects/NotifyTaskBot/telegram-bot/target/classes started by artur in /home/artur/IdeaProjects/NotifyTaskBot)
+2025-05-11T17:36:00.103+03:00 DEBUG 88517 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Running with Spring Boot v3.4.4, Spring v6.2.5
+2025-05-11T17:36:00.104+03:00  INFO 88517 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-05-11T17:36:01.276+03:00  INFO 88517 --- [notify-bot] [main] c.e.telegrambot.TelegramBotApplication   : Started TelegramBotApplication in 1.793 seconds (process running for 2.803)
