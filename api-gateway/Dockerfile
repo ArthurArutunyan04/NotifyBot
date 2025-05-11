@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY target/*.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+COPY target/api-gateway.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

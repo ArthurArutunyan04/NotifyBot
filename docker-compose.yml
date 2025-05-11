@@ -119,7 +119,7 @@ services:
     container_name: frontend
     volumes:
       - ./webapp:/usr/share/nginx/html:ro
-      - ./nginx/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
+      - ./nginx/conf.d/frontend.conf:/etc/nginx/conf.d/frontend.conf:ro
     depends_on:
       - api-gateway
     networks:
