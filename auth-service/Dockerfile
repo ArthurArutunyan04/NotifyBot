@@ -8,5 +8,5 @@ RUN mvn clean package -DskipTests
 # Second stage
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=builder /app/target/auth-service.jar app.jar
+COPY --from=builder /app/target/auth-service-0.0.1-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
