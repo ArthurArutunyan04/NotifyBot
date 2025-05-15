@@ -21,7 +21,7 @@ services:
     build: ./auth-service
     container_name: auth-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
       - SPRING_DATASOURCE_USERNAME=taskuser
       - SPRING_DATASOURCE_PASSWORD=password123
@@ -80,7 +80,7 @@ services:
     build: ./task-service
     container_name: task-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
       - SPRING_DATASOURCE_USERNAME=taskuser
       - SPRING_DATASOURCE_PASSWORD=password123
@@ -107,7 +107,7 @@ services:
     build: ./notification-service
     container_name: notification-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=
     depends_on:
       - kafka
     networks:
@@ -118,7 +118,7 @@ services:
     build: ./analytics-service
     container_name: analytics-service
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=
     depends_on:
       postgres:
         condition: service_healthy
