@@ -36,6 +36,11 @@ public class TaskController {
         return ResponseEntity.ok(toResponse(task));
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok().body("{\"status\":\"UP\"}");
+    }
+
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getUserTasks(
             @RequestHeader("X-User-Id") Long userId) {

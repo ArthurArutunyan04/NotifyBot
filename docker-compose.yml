@@ -44,7 +44,7 @@ services:
     build: ./api-gateway
     container_name: api-gateway
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=
       - JWT_SECRET=4izvZR+2YQXQH21kTF/FsQtacW1z79eLOhKPMUicrdM=
     depends_on:
       auth-service:
