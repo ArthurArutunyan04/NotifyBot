@@ -25,7 +25,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
       - SPRING_DATASOURCE_USERNAME=taskuser
       - SPRING_DATASOURCE_PASSWORD=password123
-      - JWT_SECRET=yourVerySecretKey123456789013377
+      - JWT_SECRET=4izvZR+2YQXQH21kTF/FsQtacW1z79eLOhKPMUicrdM=
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
     depends_on:
       postgres:
@@ -44,7 +44,7 @@ services:
     container_name: api-gateway
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - JWT_SECRET=yourVerySecretKey123456789013377
+      - JWT_SECRET=4izvZR+2YQXQH21kTF/FsQtacW1z79eLOhKPMUicrdM=
     depends_on:
       auth-service:
         condition: service_healthy
