@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nginx:
     image: nginx:alpine
@@ -18,14 +16,16 @@ services:
     restart: unless-stopped
 
   api-gateway:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
     container_name: api-gateway
     volumes:
       - /home/ubuntu/NotifyBot/api-gateway:/app
     working_dir: /app
-    command: java -jar api-gateway.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
     networks:
       - notifybot_backend
     depends_on:
@@ -34,16 +34,18 @@ services:
     restart: unless-stopped
 
   telegram-bot:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./telegram-bot
+      dockerfile: Dockerfile
     container_name: telegram-bot
     volumes:
       - /home/ubuntu/NotifyBot/telegram-bot:/app
     working_dir: /app
-    command: java -jar telegram-bot.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
       - TELEGRAM_BOT_TOKEN=8058923875:AAGeZ62JRagwoesrjMRH6wy_i8fgz8tdKd4
-      - TELEGRAM_WEBHOOK_URL=https://web.notify-task-bot.ru/api/v1/telegram/webhook
+      - TELEGRAM_WEBHOOK_URL=https://front.notify-task-bot.ru/api/v1/telegram/webhook
     networks:
       - notifybot_backend
     depends_on:
@@ -52,14 +54,16 @@ services:
     restart: unless-stopped
 
   task-service:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./task-service
+      dockerfile: Dockerfile
     container_name: task-service
     volumes:
       - /home/ubuntu/NotifyBot/task-service:/app
     working_dir: /app
-    command: java -jar task-service.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notifybot
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
@@ -71,14 +75,16 @@ services:
     restart: unless-stopped
 
   auth-service:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
     container_name: auth-service
     volumes:
       - /home/ubuntu/NotifyBot/auth-service:/app
     working_dir: /app
-    command: java -jar auth-service.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notifybot
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
@@ -90,14 +96,16 @@ services:
     restart: unless-stopped
 
   notification-service:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
     container_name: notification-service
     volumes:
       - /home/ubuntu/NotifyBot/notification-service:/app
     working_dir: /app
-    command: java -jar notification-service.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
     networks:
       - notifybot_backend
     depends_on:
@@ -106,14 +114,16 @@ services:
     restart: unless-stopped
 
   analytics-service:
-    image: openjdk:17-jdk-slim
+    build:
+      context: ./analytics-service
+      dockerfile: Dockerfile
     container_name: analytics-service
     volumes:
       - /home/ubuntu/NotifyBot/analytics-service:/app
     working_dir: /app
-    command: java -jar analytics-service.jar
+    command: java -jar app.jar
     environment:
-      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_CONFIG_LOCATION=/app/application.properties
     networks:
       - notifybot_backend
     depends_on:
