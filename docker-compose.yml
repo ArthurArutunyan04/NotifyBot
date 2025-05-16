@@ -1,158 +1,166 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres
-    environment:
-      - POSTGRES_USER=taskuser
-      - POSTGRES_PASSWORD=password123
-      - POSTGRES_DB=task_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskuser -d task_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
-  auth-service:
-    build: ./auth-service
-    container_name: auth-service
-    environment:
-      - SPRING_PROFILES_ACTIVE=
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
-      - SPRING_DATASOURCE_USERNAME=taskuser
-      - SPRING_DATASOURCE_PASSWORD=password123
-      - JWT_SECRET=4izvZR+2YQXQH21kTF/FsQtacW1z79eLOhKPMUicrdM=
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - backend
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8082/api/v1/auth/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 300s
-    restart: unless-stopped
-
-  api-gateway:
-    build: ./api-gateway
-    container_name: api-gateway
-    environment:
-      - SPRING_PROFILES_ACTIVE=
-      - JWT_SECRET=4izvZR+2YQXQH21kTF/FsQtacW1z79eLOhKPMUicrdM=
-    depends_on:
-      auth-service:
-        condition: service_healthy
-    networks:
-      - backend
-    healthcheck:
-      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 180s
-    restart: unless-stopped
-
   nginx:
     image: nginx:alpine
     container_name: nginx
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./nginx/logs:/var/log/nginx
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - "80:80"
       - "443:443"
-    depends_on:
-      api-gateway:
-        condition: service_healthy
+    volumes:
+      - /home/ubuntu/NotifyBot/nginx/conf.d:/etc/nginx/conf.d
+      - /home/ubuntu/NotifyBot/certs:/etc/letsencrypt
     networks:
-      - backend
+      - notifybot_backend
+    depends_on:
+      - api-gateway
+      - telegram-bot
     restart: unless-stopped
 
-  task-service:
-    build: ./task-service
-    container_name: task-service
+  api-gateway:
+    image: openjdk:17-jdk-slim
+    container_name: api-gateway
+    volumes:
+      - /home/ubuntu/NotifyBot/api-gateway:/app
+    working_dir: /app
+    command: java -jar api-gateway.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/task_db
-      - SPRING_DATASOURCE_USERNAME=taskuser
-      - SPRING_DATASOURCE_PASSWORD=password123
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - SPRING_CONFIG_LOCATION=/app/application.yml
     networks:
-      - backend
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
     restart: unless-stopped
 
   telegram-bot:
-    build: ./telegram-bot
+    image: openjdk:17-jdk-slim
     container_name: telegram-bot
+    volumes:
+      - /home/ubuntu/NotifyBot/telegram-bot:/app
+    working_dir: /app
+    command: java -jar telegram-bot.jar
     environment:
-      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-    depends_on:
-      auth-service:
-        condition: service_healthy
+      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - TELEGRAM_BOT_TOKEN=8058923875:AAGeZ62JRagwoesrjMRH6wy_i8fgz8tdKd4
+      - TELEGRAM_WEBHOOK_URL=https://web.notify-task-bot.ru/api/v1/telegram/webhook
     networks:
-      - backend
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
+    restart: unless-stopped
+
+  task-service:
+    image: openjdk:17-jdk-slim
+    container_name: task-service
+    volumes:
+      - /home/ubuntu/NotifyBot/task-service:/app
+    working_dir: /app
+    command: java -jar task-service.jar
+    environment:
+      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notifybot
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+    networks:
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
+    restart: unless-stopped
+
+  auth-service:
+    image: openjdk:17-jdk-slim
+    container_name: auth-service
+    volumes:
+      - /home/ubuntu/NotifyBot/auth-service:/app
+    working_dir: /app
+    command: java -jar auth-service.jar
+    environment:
+      - SPRING_CONFIG_LOCATION=/app/application.yml
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notifybot
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
+    networks:
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
     restart: unless-stopped
 
   notification-service:
-    build: ./notification-service
+    image: openjdk:17-jdk-slim
     container_name: notification-service
+    volumes:
+      - /home/ubuntu/NotifyBot/notification-service:/app
+    working_dir: /app
+    command: java -jar notification-service.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=
-    depends_on:
-      - kafka
+      - SPRING_CONFIG_LOCATION=/app/application.yml
     networks:
-      - backend
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
     restart: unless-stopped
 
   analytics-service:
-    build: ./analytics-service
+    image: openjdk:17-jdk-slim
     container_name: analytics-service
+    volumes:
+      - /home/ubuntu/NotifyBot/analytics-service:/app
+    working_dir: /app
+    command: java -jar analytics-service.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - SPRING_CONFIG_LOCATION=/app/application.yml
     networks:
-      - backend
+      - notifybot_backend
+    depends_on:
+      - postgres
+      - kafka
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=notifybot
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - notifybot_backend
+    restart: unless-stopped
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    networks:
+      - notifybot_backend
     restart: unless-stopped
 
   kafka:
-    image: confluentinc/cp-kafka:7.4.0
+    image: confluentinc/cp-kafka:7.3.0
     container_name: kafka
     environment:
       - KAFKA_BROKER_ID=1
       - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+    networks:
+      - notifybot_backend
     depends_on:
       - zookeeper
-    networks:
-      - backend
     restart: unless-stopped
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.4.0
-    container_name: zookeeper
-    environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-      - ZOOKEEPER_TICK_TIME=2000
-    networks:
-      - backend
-    restart: unless-stopped
+networks:
+  notifybot_backend:
+    driver: bridge
 
 volumes:
   postgres_data:
-
-networks:
-  backend:
-    name: notifybot_backend
