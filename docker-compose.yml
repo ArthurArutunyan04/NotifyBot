@@ -33,12 +33,11 @@ services:
     networks:
       - backend
     healthcheck:
-#      test: [ "CMD-SHELL", "curl -f http://localhost:8082/api/v1/auth/health || exit 1" ]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#      start_period: 60s
-      test: ["NONE"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/api/v1/auth/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
 
   api-gateway:
