@@ -58,6 +58,8 @@ services:
       retries: 10
       start_period: 150s
     restart: unless-stopped
+    volumes:
+      - maven_cache:/root/.m2
 
   nginx:
     image: nginx:alpine
@@ -152,6 +154,7 @@ services:
 
 volumes:
   postgres_data:
+  maven_cache:
 
 networks:
   backend:
