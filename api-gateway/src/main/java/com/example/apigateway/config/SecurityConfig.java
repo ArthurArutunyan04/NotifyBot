@@ -15,6 +15,7 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.disable()) // Отключаем проверку заголовков
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/v1/auth/health", "/api/v1/tasks/health", "/api/v1/telegram/health", "/actuator/**").permitAll()
                         .anyExchange().authenticated()
