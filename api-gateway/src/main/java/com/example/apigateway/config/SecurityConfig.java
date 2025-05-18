@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -15,12 +14,10 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.disable()) // Отключаем проверку заголовков
+                .headers(headers -> headers.disable())
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/api/v1/auth/health", "/api/v1/tasks/health", "/api/v1/telegram/health", "/actuator/**").permitAll()
-                        .anyExchange().authenticated()
-                )
-                .httpBasic(withDefaults());
+                        .anyExchange().permitAll()
+                );
         return http.build();
     }
 }
