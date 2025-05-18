@@ -54,8 +54,8 @@ services:
     healthcheck:
       test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
       start_period: 150s
     restart: unless-stopped
 
