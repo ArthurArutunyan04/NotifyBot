@@ -1,4 +1,4 @@
-package com.example.telegrambot.controller;
+package com.example.taskservice.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/telegram")
+@RequestMapping("/api/v1/tasks")
 public class HealthController {
 
     @GetMapping("/health")
     public ResponseEntity<String> health() {
-        return ResponseEntity.ok("Telegram Bot is up");
+        return ResponseEntity.ok("Task Service is up");
     }
 }
