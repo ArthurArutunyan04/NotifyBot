@@ -3,27 +3,37 @@ const APP_CONFIG = {
     PLATFORM: detectPlatform()
 };
 
+// Функция для записи логов в интерфейс
+function logToDebug(message) {
+    console.log(message);
+    const debugLog = document.getElementById('debug-log');
+    if (debugLog) {
+        debugLog.innerHTML += `<div>${new Date().toISOString()}: ${message}</div>`;
+        debugLog.scrollTop = debugLog.scrollHeight;
+    }
+}
+
 function initApp() {
-    console.log("DOM loaded");
+    logToDebug("DOM loaded");
     try {
         if (window.Telegram && Telegram.WebApp) {
-            console.log("Telegram WebApp detected");
-            console.log("InitData:", Telegram.WebApp.initData);
-            console.log("User:", Telegram.WebApp.initDataUnsafe?.user);
+            logToDebug("Telegram WebApp detected");
+            logToDebug("InitData: " + Telegram.WebApp.initData);
+            logToDebug("User: " + JSON.stringify(Telegram.WebApp.initDataUnsafe?.user));
             Telegram.WebApp.ready();
             Telegram.WebApp.expand();
         } else {
-            console.warn("Telegram WebApp not loaded");
+            logToDebug("Telegram WebApp not loaded");
         }
         initPlatform();
         setupNavigation();
         checkAuth().catch(e => {
-            console.error("Auth error:", e);
+            logToDebug("Auth error: " + e.message);
             showAlert("Ошибка авторизации: " + e.message);
         });
         loadCurrentPage();
     } catch (e) {
-        console.error("Initialization error:", e);
+        logToDebug("Initialization error: " + e.message);
         showAlert("Критическая ошибка: " + e.message);
     }
 }
@@ -49,8 +59,9 @@ function initPlatform() {
         webApp.BackButton.onClick(() => {
             if (window.history.length > 1) {
                 history.back();
+                logToDebug("Back button: navigating back");
             } else {
-                console.log("Back button clicked, closing Web App");
+                logToDebug("Back button: closing Web App");
                 webApp.close();
             }
         });
@@ -59,7 +70,7 @@ function initPlatform() {
 
 function setupNavigation() {
     window.navigateTo = function(page) {
-        console.log("Navigating to:", page);
+        logToDebug("Navigating to: " + page);
         if (APP_CONFIG.PLATFORM === 'tg') {
             history.pushState(null, '', page);
             loadPageContent(page);
@@ -79,7 +90,7 @@ function loadCurrentPage() {
 async function loadPageContent(path) {
     try {
         const pageToLoad = path === '/' ? '/index.html' : path;
-        console.log("Loading page:", pageToLoad);
+        logToDebug("Loading page: " + pageToLoad);
         const response = await fetch(pageToLoad);
         if (!response.ok) throw new Error(`Page not found: ${pageToLoad}`);
         const text = await response.text();
@@ -91,8 +102,8 @@ async function loadPageContent(path) {
         appContainer.innerHTML = newContent.innerHTML;
         initPageScripts(path);
     } catch (error) {
-        console.error('Failed to load page:', error);
-        showAlert('Ошибка загрузки страницы');
+        logToDebug("Failed to load page: " + error.message);
+        showAlert("Ошибка загрузки страницы: " + error.message);
     }
 }
 
@@ -111,22 +122,22 @@ function initPageScripts(path) {
 }
 
 function initMainPage() {
-    console.log('Main page initialized');
+    logToDebug("Main page initialized");
 }
 
 async function checkAuth() {
     if (APP_CONFIG.PLATFORM === 'tg') {
-        console.log("Checking auth...");
+        logToDebug("Checking auth...");
         if (!Telegram.WebApp.initData) {
-            console.warn("Telegram auth data not available");
+            logToDebug("Telegram auth data not available");
             showAlert("Данные авторизации отсутствуют. Пожалуйста, перезайдите в бота.");
             return;
         }
         if (!localStorage.getItem('jwt')) {
-            console.log("No JWT found, authenticating...");
+            logToDebug("No JWT found, authenticating...");
             await authenticateTelegram();
         }
-        console.log("Validating token...");
+        logToDebug("Validating token...");
         await validateToken();
     }
 }
@@ -134,7 +145,7 @@ async function checkAuth() {
 async function authenticateTelegram() {
     const tgData = Telegram.WebApp.initData;
     const user = Telegram.WebApp.initDataUnsafe.user;
-    console.log("Authenticating with user:", user);
+    logToDebug("Authenticating with user: " + JSON.stringify(user));
     try {
         const response = await apiRequest('/auth/telegram', 'POST', {
             id: user.id,
@@ -144,7 +155,7 @@ async function authenticateTelegram() {
             authDate: Telegram.WebApp.initDataUnsafe.auth_date,
             hash: Telegram.WebApp.initDataUnsafe.hash
         });
-        console.log("Auth response:", response);
+        logToDebug("Auth response: " + JSON.stringify(response));
         localStorage.setItem('jwt', response.token);
         localStorage.setItem('user', JSON.stringify({
             id: user.id,
@@ -152,7 +163,7 @@ async function authenticateTelegram() {
         }));
         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
     } catch (error) {
-        console.error("Auth failed:", error);
+        logToDebug("Auth failed: " + error.message);
         throw new Error("Не удалось авторизоваться: " + error.message);
     }
 }
@@ -160,9 +171,9 @@ async function authenticateTelegram() {
 async function validateToken() {
     try {
         const response = await apiRequest('/auth/validate', 'GET');
-        console.log("Token validation response:", response);
+        logToDebug("Token validation response: " + JSON.stringify(response));
     } catch (error) {
-        console.error("Token validation failed:", error);
+        logToDebug("Token validation failed: " + error.message);
         localStorage.removeItem('jwt');
         throw new Error("Токен недействителен: " + error.message);
     }
@@ -175,33 +186,33 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     };
     const token = localStorage.getItem('jwt');
     if (token) headers['Authorization'] = `Bearer ${token}`;
-    console.log(`Sending ${method} request to ${APP_CONFIG.API_BASE_URL}${endpoint}`);
+    logToDebug(`Sending ${method} request to ${APP_CONFIG.API_BASE_URL}${endpoint}`);
     try {
         const response = await fetch(`${APP_CONFIG.API_BASE_URL}${endpoint}`, {
             method,
             headers,
             body: body ? JSON.stringify(body) : null
         });
-        console.log(`Response status: ${response.status}`);
+        logToDebug(`Response status: ${response.status}`);
         if (!response.ok) {
             let errorMessage = 'Request failed';
             try {
                 const error = await response.json();
                 errorMessage = error.message || errorMessage;
             } catch (e) {
-                console.error("Failed to parse error response:", e);
+                logToDebug("Failed to parse error response: " + e.message);
             }
             throw new Error(errorMessage);
         }
         return response.json();
     } catch (error) {
-        console.error("API request failed:", error);
+        logToDebug("API request failed: " + error.message);
         throw error;
     }
 }
 
 function showAlert(message) {
-    console.log("Showing alert:", message);
+    logToDebug("Showing alert: " + message);
     if (APP_CONFIG.PLATFORM === 'tg') {
         Telegram.WebApp.showAlert(message);
     } else {
