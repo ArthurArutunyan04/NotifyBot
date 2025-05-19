@@ -1,43 +1,173 @@
-class ApiError extends Error {
-    constructor(message, status) {
-        super(message);
-        this.name = "ApiError";
-        this.status = status;
+const APP_CONFIG = {
+    API_BASE_URL: '/api/v1',
+    PLATFORM: detectPlatform()
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM loaded");
+    try {
+        if (window.Telegram && Telegram.WebApp) {
+            console.log("Telegram WebApp detected");
+            console.log("InitData:", Telegram.WebApp.initData);
+            console.log("User:", Telegram.WebApp.initDataUnsafe?.user);
+        }
+        initPlatform();
+        setupNavigation();
+        checkAuth().catch(e => console.error("Auth error:", e));
+        loadCurrentPage();
+    } catch (e) {
+        console.error("Initialization error:", e);
+        showAlert("Critical error: " + e.message);
+    }
+});
+
+function detectPlatform() {
+    if (window.Telegram && Telegram.WebApp) return 'tg';
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        ? 'mobile'
+        : 'desktop';
+}
+
+function initPlatform() {
+    document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
+
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        const webApp = Telegram.WebApp;
+        webApp.ready();
+        webApp.expand();
+
+        webApp.BackButton.show();
+        webApp.BackButton.onClick(() => {
+            if (window.history.length > 1) {
+                history.back();
+            } else {
+                webApp.close();
+            }
+        });
     }
 }
 
-async function apiRequest(url, method = 'GET', body = null) {
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+function setupNavigation() {
+    window.navigateTo = function(page) {
+        if (APP_CONFIG.PLATFORM === 'tg') {
+            history.pushState(null, '', page);
+            loadPageContent(page);
+        } else {
+            window.location.href = page;
         }
     };
 
-    const token = localStorage.getItem('jwt');
-    if (token) options.headers['Authorization'] = `Bearer ${token}`;
+    window.addEventListener('popstate', function() {
+        loadPageContent(window.location.pathname);
+    });
+}
 
-    if (body) options.body = JSON.stringify(body);
+function loadCurrentPage() {
+    loadPageContent(window.location.pathname);
+}
 
-    console.log("Making request to:", url, "with options:", options);
-
+async function loadPageContent(path) {
     try {
-        const response = await fetch(`/api/v1${url}`, options);
-        console.log("Response status:", response.status);
+        const pageToLoad = path === '/' ? '/index.html' : path;
+        const response = await fetch(pageToLoad);
+        if (!response.ok) throw new Error(`Page not found: ${pageToLoad}`);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error("API Error:", errorData);
-            throw new ApiError(errorData.message || 'Request failed', response.status);
-        }
+        const appContainer = document.querySelector('.app-container');
+        const newContent = doc.querySelector('.app-container');
+        if (!newContent) throw new Error('Invalid page structure');
+        appContainer.innerHTML = newContent.innerHTML;
 
-        return response.json();
+        initPageScripts(path);
     } catch (error) {
-        console.error("Network error:", error);
-        throw new ApiError('Network error', 500);
+        console.error('Failed to load page:', error);
+        showAlert('Ошибка загрузки страницы');
     }
 }
 
-window.apiRequest = apiRequest;
-window.ApiError = ApiError;
+function initPageScripts(path) {
+    const pageScripts = {
+        '/': initMainPage,
+        '/index.html': initMainPage,
+        '/add-task.html': initAddTaskPage,
+        '/active-tasks.html': initActiveTasksPage,
+        '/completed-tasks.html': initCompletedTasksPage
+    };
+
+    const pageKey = Object.keys(pageScripts).find(key => path.endsWith(key));
+    if (pageKey && pageScripts[pageKey]) {
+        pageScripts[pageKey]();
+    }
+}
+
+function initMainPage() {
+    console.log('Main page initialized');
+}
+
+async function checkAuth() {
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        try {
+            if (!Telegram.WebApp.initData) {
+                throw new Error("Telegram auth data not available");
+            }
+
+            if (!localStorage.getItem('jwt')) {
+                await authenticateTelegram();
+            }
+
+            await validateToken();
+        } catch (error) {
+            console.error("Auth check failed:", error);
+            showAlert("Ошибка авторизации. Пожалуйста, перезайдите в бота.");
+            if (APP_CONFIG.PLATFORM === 'tg') {
+                Telegram.WebApp.close();
+            }
+        }
+    }
+}
+
+async function authenticateTelegram() {
+    const tgData = Telegram.WebApp.initData;
+    const user = Telegram.WebApp.initDataUnsafe.user;
+
+    try {
+        const response = await apiRequest('/auth/telegram', 'POST', {
+            id: user.id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            username: user.username,
+            authDate: Telegram.WebApp.initDataUnsafe.auth_date,
+            hash: Telegram.WebApp.initDataUnsafe.hash
+        });
+
+        localStorage.setItem('jwt', response.token);
+        localStorage.setItem('user', JSON.stringify({
+            id: user.id,
+            username: user.username
+        }));
+
+        Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+    } catch (error) {
+        console.error("Auth failed:", error);
+        throw new Error("Не удалось авторизоваться");
+    }
+}
+
+async function validateToken() {
+    try {
+        await apiRequest('/auth/validate', 'GET');
+    } catch (error) {
+        localStorage.removeItem('jwt');
+        throw new Error("Токен недействителен");
+    }
+}
+
+function showAlert(message) {
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        Telegram.WebApp.showAlert(message);
+    } else {
+        alert(message);
+    }
+}

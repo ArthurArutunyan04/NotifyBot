@@ -5,7 +5,8 @@ import com.example.telegrambot.handler.CommandHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -16,7 +17,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.List;
 
 @Component
-public class NotifyBot extends TelegramLongPollingBot {
+public class NotifyBot extends TelegramWebhookBot {
     private static final Logger logger = LoggerFactory.getLogger(NotifyBot.class);
     private final BotConfig botConfig;
     private final CommandHandler commandHandler;
@@ -33,7 +34,12 @@ public class NotifyBot extends TelegramLongPollingBot {
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public String getBotPath() {
+        return "/api/v1/telegram/webhook";
+    }
+
+    @Override
+    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
@@ -41,14 +47,15 @@ public class NotifyBot extends TelegramLongPollingBot {
             String response = commandHandler.handleCommand(messageText);
 
             if (response.startsWith("WEBAPP:")) {
-                sendWebAppLink(chatId, response.replace("WEBAPP:", ""));
+                return sendWebAppLink(chatId, response.replace("WEBAPP:", ""));
             } else {
-                sendTextMessage(chatId, response);
+                return sendTextMessage(chatId, response);
             }
         }
+        return null;
     }
 
-    private void sendWebAppLink(Long chatId, String url) {
+    private SendMessage sendWebAppLink(Long chatId, String url) {
         try {
             InlineKeyboardMarkup keyboard = new InlineKeyboardMarkup();
             InlineKeyboardButton button = new InlineKeyboardButton();
@@ -58,27 +65,21 @@ public class NotifyBot extends TelegramLongPollingBot {
 
             keyboard.setKeyboard(List.of(List.of(button)));
 
-            SendMessage message = SendMessage.builder()
+            return SendMessage.builder()
                     .chatId(chatId.toString())
                     .text("Нажмите для открытия веб-приложения:")
                     .replyMarkup(keyboard)
                     .build();
-
-            execute(message);
-        } catch (TelegramApiException e) {
+        } catch (Exception e) {
             logger.error("Failed to send webapp link", e);
-            sendTextMessage(chatId, "Ошибка при открытии веб-приложения");
+            return sendTextMessage(chatId, "Ошибка при открытии веб-приложения");
         }
     }
 
-    private void sendTextMessage(Long chatId, String text) {
-        try {
-            execute(SendMessage.builder()
-                    .chatId(chatId.toString())
-                    .text(text)
-                    .build());
-        } catch (TelegramApiException e) {
-            logger.error("Failed to send message", e);
-        }
+    private SendMessage sendTextMessage(Long chatId, String text) {
+        return SendMessage.builder()
+                .chatId(chatId.toString())
+                .text(text)
+                .build();
     }
 }
