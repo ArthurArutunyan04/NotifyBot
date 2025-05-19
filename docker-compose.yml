@@ -153,16 +153,16 @@ services:
       - backend
     restart: unless-stopped
 
-  certbot:
-    image: certbot/certbot:latest
-    container_name: certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    networks:
-      - backend
-    restart: unless-stopped
+#  certbot:
+#    image: certbot/certbot:latest
+#    container_name: certbot
+#    volumes:
+#      - /etc/letsencrypt:/etc/letsencrypt
+#      - /var/lib/letsencrypt:/var/lib/letsencrypt
+#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+#    networks:
+#      - backend
+#    restart: unless-stopped
 
 volumes:
   postgres_data:
