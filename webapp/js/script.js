@@ -10,16 +10,21 @@ function initApp() {
             console.log("Telegram WebApp detected");
             console.log("InitData:", Telegram.WebApp.initData);
             console.log("User:", Telegram.WebApp.initDataUnsafe?.user);
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
         } else {
             console.warn("Telegram WebApp not loaded");
         }
         initPlatform();
         setupNavigation();
-        checkAuth().catch(e => console.error("Auth error:", e));
+        checkAuth().catch(e => {
+            console.error("Auth error:", e);
+            showAlert("Ошибка авторизации: " + e.message);
+        });
         loadCurrentPage();
     } catch (e) {
         console.error("Initialization error:", e);
-        showAlert("Critical error: " + e.message);
+        showAlert("Критическая ошибка: " + e.message);
     }
 }
 
@@ -40,13 +45,12 @@ function initPlatform() {
     document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
     if (APP_CONFIG.PLATFORM === 'tg') {
         const webApp = Telegram.WebApp;
-        webApp.ready();
-        webApp.expand();
         webApp.BackButton.show();
         webApp.BackButton.onClick(() => {
             if (window.history.length > 1) {
                 history.back();
             } else {
+                console.log("Back button clicked, closing Web App");
                 webApp.close();
             }
         });
@@ -55,6 +59,7 @@ function initPlatform() {
 
 function setupNavigation() {
     window.navigateTo = function(page) {
+        console.log("Navigating to:", page);
         if (APP_CONFIG.PLATFORM === 'tg') {
             history.pushState(null, '', page);
             loadPageContent(page);
@@ -74,6 +79,7 @@ function loadCurrentPage() {
 async function loadPageContent(path) {
     try {
         const pageToLoad = path === '/' ? '/index.html' : path;
+        console.log("Loading page:", pageToLoad);
         const response = await fetch(pageToLoad);
         if (!response.ok) throw new Error(`Page not found: ${pageToLoad}`);
         const text = await response.text();
@@ -110,24 +116,18 @@ function initMainPage() {
 
 async function checkAuth() {
     if (APP_CONFIG.PLATFORM === 'tg') {
-        try {
-            console.log("Checking auth...");
-            if (!Telegram.WebApp.initData) {
-                console.warn("Telegram auth data not available");
-                showAlert("Данные авторизации отсутствуют. Пожалуйста, перезайдите в бота.");
-                return;
-            }
-            if (!localStorage.getItem('jwt')) {
-                console.log("No JWT found, authenticating...");
-                await authenticateTelegram();
-            }
-            console.log("Validating token...");
-            await validateToken();
-        } catch (error) {
-            console.error("Auth check failed:", error);
-            showAlert("Ошибка авторизации: " + error.message);
-            // Не закрываем Web App, даём пользователю шанс исправить
+        console.log("Checking auth...");
+        if (!Telegram.WebApp.initData) {
+            console.warn("Telegram auth data not available");
+            showAlert("Данные авторизации отсутствуют. Пожалуйста, перезайдите в бота.");
+            return;
         }
+        if (!localStorage.getItem('jwt')) {
+            console.log("No JWT found, authenticating...");
+            await authenticateTelegram();
+        }
+        console.log("Validating token...");
+        await validateToken();
     }
 }
 
@@ -182,9 +182,16 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
             headers,
             body: body ? JSON.stringify(body) : null
         });
+        console.log(`Response status: ${response.status}`);
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.message || 'Request failed');
+            let errorMessage = 'Request failed';
+            try {
+                const error = await response.json();
+                errorMessage = error.message || errorMessage;
+            } catch (e) {
+                console.error("Failed to parse error response:", e);
+            }
+            throw new Error(errorMessage);
         }
         return response.json();
     } catch (error) {
@@ -194,6 +201,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 }
 
 function showAlert(message) {
+    console.log("Showing alert:", message);
     if (APP_CONFIG.PLATFORM === 'tg') {
         Telegram.WebApp.showAlert(message);
     } else {
