@@ -13,9 +13,7 @@
             <h1 class="bot-name">NotifyBot<span class="checkmark">✓</span></h1>
         </div>
     </header>
-
     <div class="content">
-        <!-- Telegram WebApp -->
         <div class="tg-content" id="tgContent">
             <div class="button-container">
                 <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
@@ -23,20 +21,16 @@
                 <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
                 <button class="action-btn" onclick="navigateTo('analytics.html')">Аналитика</button>
             </div>
-                <a href="https://t.me/macanswag_bot" class="btn mobile-btn back-button">Открыть бота</a>
+            <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
         </div>
-
-        <!-- Mobile browser -->
         <div class="mobile-content" id="mobileContent">
             <div class="button-container">
                 <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
                 <button class="action-btn" onclick="navigateTo('active-tasks.html')">Текущие задачи</button>
                 <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
             </div>
-            <a href="https://t.me/macanswag_bot" class="btn mobile-btn back-button">Открыть бота</a>
+            <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
         </div>
-
-        <!-- Desktop browser -->
         <div class="desktop-content" id="desktopContent">
             <div class="button-container">
                 <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
@@ -44,13 +38,22 @@
                 <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
                 <button class="action-btn" onclick="navigateTo('analytics.html')">Аналитика</button>
             </div>
-            <a href="https://t.me/macanswag_bot" class="btn mobile-btn back-button">Открыть бота</a>
+            <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
         </div>
     </div>
 </div>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="js/api.js"></script>
-<script src="js/script.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js" onload="initApp()"></script>
+<script>
+    function initApp() {
+        const script1 = document.createElement('script');
+        script1.src = 'js/api.js';
+        document.body.appendChild(script1);
+        script1.onload = () => {
+            const script2 = document.createElement('script');
+            script2.src = 'js/script.js';
+            document.body.appendChild(script2);
+        };
+    }
+</script>
 </body>
 </html>
