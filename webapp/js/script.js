@@ -79,7 +79,7 @@ async function authenticateTelegram() {
 
     logToDebug("Authenticating with user: " + JSON.stringify(user));
     try {
-        const response = await apiRequest('/auth/telegram', 'POST', {
+        const response = await apiRequest('api/auth/telegram', 'POST', {
             id: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
