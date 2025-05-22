@@ -54,69 +54,69 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     }
 }
 
-async function authenticateTelegram() {
-    logToDebug("Starting authentication in background...");
-    if (!window.Telegram || !Telegram.WebApp) {
-        logToDebug("Telegram WebApp not loaded");
-        return;
-    }
-
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-    const tgData = Telegram.WebApp.initData;
-    const user = Telegram.WebApp.initDataUnsafe.user;
-
-    if (!tgData || !user) {
-        logToDebug("Telegram auth data not available, skipping authentication");
-        return;
-    }
-
-    logToDebug("Authenticating with user: " + JSON.stringify(user));
-    try {
-        const response = await apiRequest('/auth/telegram', 'POST', {
-            id: user.id,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            username: user.username,
-            authDate: Telegram.WebApp.initDataUnsafe.auth_date,
-            hash: Telegram.WebApp.initDataUnsafe.hash
-        });
-        logToDebug("Auth response: " + JSON.stringify(response));
-        localStorage.setItem('jwt', response.token);
-        localStorage.setItem('user', JSON.stringify({
-            id: user.id,
-            username: user.username
-        }));
-        Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        logToDebug("Авторизация успешна! JWT сохранён.");
-    } catch (error) {
-        logToDebug("Auth failed, continuing without auth: " + error.message);
-    }
-}
-
-async function checkAuth() {
-    if (APP_CONFIG.PLATFORM === 'tg' && window.Telegram && Telegram.WebApp) {
-        try {
-            if (!localStorage.getItem('jwt')) {
-                await authenticateTelegram();
-            } else {
-                await validateToken();
-            }
-        } catch (error) {
-            logToDebug("Auth check failed, continuing without auth: " + error.message);
-            localStorage.removeItem('jwt');
-        }
-    }
-}
-
-async function validateToken() {
-    try {
-        await apiRequest('/auth/validate', 'GET');
-    } catch (error) {
-        logToDebug("Token validation failed, continuing without auth: " + error.message);
-        localStorage.removeItem('jwt');
-    }
-}
+// async function authenticateTelegram() {
+//     logToDebug("Starting authentication in background...");
+//     if (!window.Telegram || !Telegram.WebApp) {
+//         logToDebug("Telegram WebApp not loaded");
+//         return;
+//     }
+//
+//     Telegram.WebApp.ready();
+//     Telegram.WebApp.expand();
+//     const tgData = Telegram.WebApp.initData;
+//     const user = Telegram.WebApp.initDataUnsafe.user;
+//
+//     if (!tgData || !user) {
+//         logToDebug("Telegram auth data not available, skipping authentication");
+//         return;
+//     }
+//
+//     logToDebug("Authenticating with user: " + JSON.stringify(user));
+//     try {
+//         const response = await apiRequest('/auth/telegram', 'POST', {
+//             id: user.id,
+//             firstName: user.first_name,
+//             lastName: user.last_name,
+//             username: user.username,
+//             authDate: Telegram.WebApp.initDataUnsafe.auth_date,
+//             hash: Telegram.WebApp.initDataUnsafe.hash
+//         });
+//         logToDebug("Auth response: " + JSON.stringify(response));
+//         localStorage.setItem('jwt', response.token);
+//         localStorage.setItem('user', JSON.stringify({
+//             id: user.id,
+//             username: user.username
+//         }));
+//         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+//         logToDebug("Авторизация успешна! JWT сохранён.");
+//     } catch (error) {
+//         logToDebug("Auth failed, continuing without auth: " + error.message);
+//     }
+// }
+//
+// async function checkAuth() {
+//     if (APP_CONFIG.PLATFORM === 'tg' && window.Telegram && Telegram.WebApp) {
+//         try {
+//             if (!localStorage.getItem('jwt')) {
+//                 await authenticateTelegram();
+//             } else {
+//                 await validateToken();
+//             }
+//         } catch (error) {
+//             logToDebug("Auth check failed, continuing without auth: " + error.message);
+//             localStorage.removeItem('jwt');
+//         }
+//     }
+// }
+//
+// async function validateToken() {
+//     try {
+//         await apiRequest('/auth/validate', 'GET');
+//     } catch (error) {
+//         logToDebug("Token validation failed, continuing without auth: " + error.message);
+//         localStorage.removeItem('jwt');
+//     }
+// }
 
 function detectPlatform() {
     if (window.Telegram && Telegram.WebApp) return 'tg';
@@ -165,26 +165,29 @@ function loadCurrentPage() {
 
 async function loadPageContent(path) {
     try {
-        const pageToLoad = path === '/' || !path ? '/index.html' : path;
+        const pageToLoad = path === '/' || !path || path === '/index.html' ? '/index.html' : path;
         logToDebug(`Attempting to load page: ${pageToLoad}`);
 
-        const response = await fetch(pageToLoad);
-        if (response.status === 404) {
-            logToDebug(`Page ${pageToLoad} not found, falling back to index.html`);
-            const indexResponse = await fetch('/index.html');
-            if (!indexResponse.ok) throw new Error(`Index.html not found`);
-            const text = await indexResponse.text();
+        const response = await fetch(pageToLoad, { cache: 'no-store' }); // Отключаем кэш
+        if (!response.ok) {
+            logToDebug(`Page ${pageToLoad} not found (status: ${response.status}), falling back to index.html`);
+            const fallbackResponse = await fetch('/index.html', { cache: 'no-store' });
+            if (!fallbackResponse.ok) {
+                logToDebug(`Failed to load index.html (status: ${fallbackResponse.status})`);
+                return;
+            }
+            const text = await fallbackResponse.text();
             const parser = new DOMParser();
             const doc = parser.parseFromString(text, 'text/html');
 
             const appContainer = document.querySelector('.app-container');
             const newContent = doc.querySelector('.app-container');
-            if (!newContent) throw new Error('Invalid page structure');
+            if (!newContent) {
+                logToDebug('Invalid page structure in index.html');
+                return;
+            }
             appContainer.innerHTML = newContent.innerHTML;
-
-            initPageScripts(path);
-        } else if (!response.ok) {
-            throw new Error(`Page load failed with status ${response.status}`);
+            initPageScripts('/index.html');
         } else {
             const text = await response.text();
             const parser = new DOMParser();
@@ -192,14 +195,31 @@ async function loadPageContent(path) {
 
             const appContainer = document.querySelector('.app-container');
             const newContent = doc.querySelector('.app-container');
-            if (!newContent) throw new Error('Invalid page structure');
+            if (!newContent) {
+                logToDebug(`Invalid page structure in ${pageToLoad}`);
+                return;
+            }
             appContainer.innerHTML = newContent.innerHTML;
-
-            initPageScripts(path);
+            initPageScripts(pageToLoad);
         }
     } catch (error) {
-        console.error('Failed to load page:', error);
-        showAlert('Ошибка загрузки страницы');
+        logToDebug(`Page load error (decorative): ${error.message}`);
+        try {
+            const fallbackResponse = await fetch('/index.html', { cache: 'no-store' });
+            if (fallbackResponse.ok) {
+                const text = await fallbackResponse.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const appContainer = document.querySelector('.app-container');
+                const newContent = doc.querySelector('.app-container');
+                if (newContent) {
+                    appContainer.innerHTML = newContent.innerHTML;
+                    initPageScripts('/index.html');
+                }
+            }
+        } catch (fallbackError) {
+            logToDebug(`Failed to load index.html as fallback: ${fallbackError.message}`);
+        }
     }
 }
 
