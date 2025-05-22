@@ -165,19 +165,38 @@ function loadCurrentPage() {
 
 async function loadPageContent(path) {
     try {
-        const pageToLoad = path === '/' ? '/index.html' : path;
+        const pageToLoad = path === '/' || !path ? '/index.html' : path;
+        logToDebug(`Attempting to load page: ${pageToLoad}`);
+
         const response = await fetch(pageToLoad);
-        if (!response.ok) throw new Error(`Page not found: ${pageToLoad}`);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
+        if (response.status === 404) {
+            logToDebug(`Page ${pageToLoad} not found, falling back to index.html`);
+            const indexResponse = await fetch('/index.html');
+            if (!indexResponse.ok) throw new Error(`Index.html not found`);
+            const text = await indexResponse.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
 
-        const appContainer = document.querySelector('.app-container');
-        const newContent = doc.querySelector('.app-container');
-        if (!newContent) throw new Error('Invalid page structure');
-        appContainer.innerHTML = newContent.innerHTML;
+            const appContainer = document.querySelector('.app-container');
+            const newContent = doc.querySelector('.app-container');
+            if (!newContent) throw new Error('Invalid page structure');
+            appContainer.innerHTML = newContent.innerHTML;
 
-        initPageScripts(path);
+            initPageScripts(path);
+        } else if (!response.ok) {
+            throw new Error(`Page load failed with status ${response.status}`);
+        } else {
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+
+            const appContainer = document.querySelector('.app-container');
+            const newContent = doc.querySelector('.app-container');
+            if (!newContent) throw new Error('Invalid page structure');
+            appContainer.innerHTML = newContent.innerHTML;
+
+            initPageScripts(path);
+        }
     } catch (error) {
         console.error('Failed to load page:', error);
         showAlert('Ошибка загрузки страницы');
@@ -190,7 +209,8 @@ function initPageScripts(path) {
         '/index.html': initMainPage,
         '/add-task.html': initAddTaskPage,
         '/active-tasks.html': initActiveTasksPage,
-        '/completed-tasks.html': initCompletedTasksPage
+        '/completed-tasks.html': initCompletedTasksPage,
+        '/analytics.html': initAnalyticsPage
     };
 
     const pageKey = Object.keys(pageScripts).find(key => path.endsWith(key));
