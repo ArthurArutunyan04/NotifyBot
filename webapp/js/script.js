@@ -2,7 +2,6 @@ const APP_CONFIG = {
     API_BASE_URL: 'https://api.notify-task-bot.ru/api/v1'
 };
 
-// Функция для записи логов в интерфейс
 function logToDebug(message) {
     console.log(message);
     const debugLog = document.getElementById('debug-log');
@@ -12,7 +11,6 @@ function logToDebug(message) {
     }
 }
 
-// Функция для показа алерта
 async function showAlert(message, duration = 3000) {
     logToDebug("Showing alert: " + message);
     if (window.Telegram && Telegram.WebApp) {
@@ -24,7 +22,6 @@ async function showAlert(message, duration = 3000) {
     }
 }
 
-// Функция для выполнения API-запроса
 async function apiRequest(endpoint, method = 'GET', body = null) {
     const headers = {
         'Content-Type': 'application/json',
@@ -57,12 +54,11 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     }
 }
 
-// Функция авторизации
 async function authenticateTelegram() {
-    logToDebug("Starting authentication...");
+    logToDebug("Starting authentication in background...");
     if (!window.Telegram || !Telegram.WebApp) {
         logToDebug("Telegram WebApp not loaded");
-        await showAlert("Telegram WebApp не загружен. Пожалуйста, перезайдите в бота.", 5000);
+        await showAlert("Telegram WebApp не загружен. Аутентификация пропущена.", 5000);
         return;
     }
 
@@ -72,14 +68,13 @@ async function authenticateTelegram() {
     const user = Telegram.WebApp.initDataUnsafe.user;
 
     if (!tgData || !user) {
-        logToDebug("Telegram auth data not available");
-        await showAlert("Данные авторизации отсутствуют. Пожалуйста, перезайдите в бота.", 5000);
+        logToDebug("Telegram auth data not available, skipping authentication");
         return;
     }
 
     logToDebug("Authenticating with user: " + JSON.stringify(user));
     try {
-        const response = await apiRequest('api/auth/telegram', 'POST', {
+        const response = await apiRequest('/auth/telegram', 'POST', {
             id: user.id,
             firstName: user.first_name,
             lastName: user.last_name,
@@ -96,16 +91,130 @@ async function authenticateTelegram() {
         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
         await showAlert("Авторизация успешна! JWT сохранён.", 3000);
     } catch (error) {
-        logToDebug("Auth failed: " + error.message);
-        await showAlert("Ошибка авторизации: " + error.message, 5000);
+        logToDebug("Auth failed, continuing without auth: " + error.message);
+        await showAlert("Ошибка авторизации, сайт работает без авторизации: " + error.message, 5000);
     }
 }
 
-// Запуск авторизации при загрузке
+async function checkAuth() {
+    if (APP_CONFIG.PLATFORM === 'tg' && window.Telegram && Telegram.WebApp) {
+        try {
+            if (!localStorage.getItem('jwt')) {
+                await authenticateTelegram();
+            } else {
+                await validateToken();
+            }
+        } catch (error) {
+            logToDebug("Auth check failed, continuing without auth: " + error.message);
+            localStorage.removeItem('jwt');
+        }
+    }
+}
+
+async function validateToken() {
+    try {
+        await apiRequest('/auth/validate', 'GET');
+    } catch (error) {
+        logToDebug("Token validation failed, continuing without auth: " + error.message);
+        localStorage.removeItem('jwt');
+    }
+}
+
+function detectPlatform() {
+    if (window.Telegram && Telegram.WebApp) return 'tg';
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        ? 'mobile'
+        : 'desktop';
+}
+
+function initPlatform() {
+    document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
+
+    if (APP_CONFIG.PLATFORM === 'tg') {
+        const webApp = Telegram.WebApp;
+        webApp.ready();
+        webApp.expand();
+
+        webApp.BackButton.show();
+        webApp.BackButton.onClick(() => {
+            if (window.history.length > 1) {
+                history.back();
+            } else {
+                webApp.close();
+            }
+        });
+    }
+}
+
+function setupNavigation() {
+    window.navigateTo = function(page) {
+        if (APP_CONFIG.PLATFORM === 'tg') {
+            history.pushState(null, '', page);
+            loadPageContent(page);
+        } else {
+            window.location.href = page;
+        }
+    };
+
+    window.addEventListener('popstate', function() {
+        loadPageContent(window.location.pathname);
+    });
+}
+
+function loadCurrentPage() {
+    loadPageContent(window.location.pathname);
+}
+
+async function loadPageContent(path) {
+    try {
+        const pageToLoad = path === '/' ? '/index.html' : path;
+        const response = await fetch(pageToLoad);
+        if (!response.ok) throw new Error(`Page not found: ${pageToLoad}`);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        const appContainer = document.querySelector('.app-container');
+        const newContent = doc.querySelector('.app-container');
+        if (!newContent) throw new Error('Invalid page structure');
+        appContainer.innerHTML = newContent.innerHTML;
+
+        initPageScripts(path);
+    } catch (error) {
+        console.error('Failed to load page:', error);
+        showAlert('Ошибка загрузки страницы');
+    }
+}
+
+function initPageScripts(path) {
+    const pageScripts = {
+        '/': initMainPage,
+        '/index.html': initMainPage,
+        '/add-task.html': initAddTaskPage,
+        '/active-tasks.html': initActiveTasksPage,
+        '/completed-tasks.html': initCompletedTasksPage
+    };
+
+    const pageKey = Object.keys(pageScripts).find(key => path.endsWith(key));
+    if (pageKey && pageScripts[pageKey]) {
+        pageScripts[pageKey]();
+    }
+}
+
+function initMainPage() {
+    console.log('Main page initialized');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     logToDebug("DOM loaded");
-    authenticateTelegram().catch(e => {
-        logToDebug("Initialization error: " + e.message);
-        showAlert("Критическая ошибка: " + e.message, 5000);
-    });
+    APP_CONFIG.PLATFORM = detectPlatform();
+    initPlatform();
+    setupNavigation();
+    loadCurrentPage();
+    checkAuth().catch(e => logToDebug("Background auth error: " + e.message)); // Аутентификация в фоновом режиме
 });
+
+// Пустые заглушки для других страниц
+function initAddTaskPage() {}
+function initActiveTasksPage() {}
+function initCompletedTasksPage() {}

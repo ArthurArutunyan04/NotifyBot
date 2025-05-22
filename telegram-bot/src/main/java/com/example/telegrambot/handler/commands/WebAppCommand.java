@@ -17,7 +17,6 @@ public class WebAppCommand implements CommandHandler.Command {
 
     @Override
     public String execute() {
-        String url = websiteUrl + authRedirectPath;
-        return "WEBAPP:" + url;
+        return "WEBAPP:" + websiteUrl;
     }
 }
