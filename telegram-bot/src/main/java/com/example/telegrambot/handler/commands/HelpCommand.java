@@ -8,6 +8,7 @@ public class HelpCommand implements CommandHandler.Command {
         return """
             Доступные команды:
             /start - Начать работу с ботом
+            /webapp - открыть Web приложение
             /help - Показать это сообщение
             """;
     }

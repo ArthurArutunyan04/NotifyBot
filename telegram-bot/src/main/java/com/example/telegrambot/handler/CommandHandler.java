@@ -13,10 +13,13 @@ public class CommandHandler {
     }
 
     private final Map<String, Command> commands = new HashMap<>();
+    private final WebAppCommand webAppCommand;
 
-    public CommandHandler() {
+    public CommandHandler(WebAppCommand webAppCommand) {
+        this.webAppCommand = webAppCommand;
         commands.put("/start", new StartCommand());
         commands.put("/help", new HelpCommand());
+        commands.put("/webapp", webAppCommand);
     }
 
     public String handleCommand(String input) {
