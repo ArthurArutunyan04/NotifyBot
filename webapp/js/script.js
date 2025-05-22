@@ -11,7 +11,7 @@ function logToDebug(message) {
     }
 }
 
-async function showAlert(message, duration = 3000) {
+function showAlert(message, duration = 3000) {
     logToDebug("Showing alert: " + message);
     if (window.Telegram && Telegram.WebApp) {
         Telegram.WebApp.showAlert(message);
@@ -58,7 +58,6 @@ async function authenticateTelegram() {
     logToDebug("Starting authentication in background...");
     if (!window.Telegram || !Telegram.WebApp) {
         logToDebug("Telegram WebApp not loaded");
-        await showAlert("Telegram WebApp не загружен. Аутентификация пропущена.", 5000);
         return;
     }
 
@@ -89,10 +88,9 @@ async function authenticateTelegram() {
             username: user.username
         }));
         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-        await showAlert("Авторизация успешна! JWT сохранён.", 3000);
+        logToDebug("Авторизация успешна! JWT сохранён.");
     } catch (error) {
         logToDebug("Auth failed, continuing without auth: " + error.message);
-        await showAlert("Ошибка авторизации, сайт работает без авторизации: " + error.message, 5000);
     }
 }
 
@@ -211,10 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initPlatform();
     setupNavigation();
     loadCurrentPage();
-    checkAuth().catch(e => logToDebug("Background auth error: " + e.message)); // Аутентификация в фоновом режиме
+    checkAuth().catch(e => logToDebug("Background auth error: " + e.message));
 });
 
-// Пустые заглушки для других страниц
 function initAddTaskPage() {}
 function initActiveTasksPage() {}
 function initCompletedTasksPage() {}

@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         initPlatform();
         setupNavigation();
-        checkAuth().catch(e => console.error("Auth error:", e));
         loadCurrentPage();
+        checkAuth().catch(e => console.error("Background auth error:", e));
     } catch (e) {
         console.error("Initialization error:", e);
         showAlert("Critical error: " + e.message);
@@ -109,21 +109,14 @@ function initMainPage() {
 async function checkAuth() {
     if (APP_CONFIG.PLATFORM === 'tg') {
         try {
-            if (!Telegram.WebApp.initData) {
-                throw new Error("Telegram auth data not available");
-            }
-
             if (!localStorage.getItem('jwt')) {
                 await authenticateTelegram();
+            } else {
+                await validateToken();
             }
-
-            await validateToken();
         } catch (error) {
-            console.error("Auth check failed:", error);
-            showAlert("Ошибка авторизации. Пожалуйста, перезайдите в бота.");
-            if (APP_CONFIG.PLATFORM === 'tg') {
-                Telegram.WebApp.close();
-            }
+            console.error("Auth check failed, continuing without auth:", error);
+            localStorage.removeItem('jwt');
         }
     }
 }
