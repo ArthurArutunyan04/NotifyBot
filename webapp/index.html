@@ -15,36 +15,36 @@
     </header>
     <div class="content">
         <div class="tg-content" id="tgContent">
-            <div class="button-container">
-                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
-                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Текущие задачи</button>
-                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
-                <button class="action-btn" onclick="navigateTo('analytics.html')">Аналитика</button>
+            <div class="button-container" id="navButtons">
+                <button class="action-btn" data-page="add-task.html">Добавить задачу</button>
+                <button class="action-btn" data-page="active-tasks.html">Текущие задачи</button>
+                <button class="action-btn" data-page="completed-tasks.html">Выполненные задачи</button>
+                <button class="action-btn" data-page="analytics.html">Аналитика</button>
             </div>
             <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
-
+            <div id="debug-log" style="margin-top: 20px; padding: 10px; background: #f0f0f0; max-height: 200px; overflow-y: auto; font-size: 12px;"></div>
         </div>
         <div class="mobile-content" id="mobileContent">
-            <div class="button-container">
-                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
-                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Текущие задачи</button>
-                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
-                <button class="action-btn" onclick="navigateTo('analytics.html')">Аналитика</button>
+            <div class="button-container" id="mobileNavButtons">
+                <button class="action-btn" data-page="add-task.html">Добавить задачу</button>
+                <button class="action-btn" data-page="active-tasks.html">Текущие задачи</button>
+                <button class="action-btn" data-page="completed-tasks.html">Выполненные задачи</button>
+                <button class="action-btn" data-page="analytics.html">Аналитика</button>
             </div>
             <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
         </div>
         <div class="desktop-content" id="desktopContent">
-            <div class="button-container">
-                <button class="action-btn" onclick="navigateTo('add-task.html')">Добавить задачу</button>
-                <button class="action-btn" onclick="navigateTo('active-tasks.html')">Текущие задачи</button>
-                <button class="action-btn" onclick="navigateTo('completed-tasks.html')">Выполненные задачи</button>
-                <button class="action-btn" onclick="navigateTo('analytics.html')">Аналитика</button>
+            <div class="button-container" id="desktopNavButtons">
+                <button class="action-btn" data-page="add-task.html">Добавить задачу</button>
+                <button class="action-btn" data-page="active-tasks.html">Текущие задачи</button>
+                <button class="action-btn" data-page="completed-tasks.html">Выполненные задачи</button>
+                <button class="action-btn" data-page="analytics.html">Аналитика</button>
             </div>
             <a href="https://t.me/QwikTaskBot" class="btn mobile-btn back-button">Открыть бота</a>
         </div>
     </div>
 </div>
-<script defer src="/js/telegram-web-app.js"></script>
+<script defer src="https://telegram.org/js/telegram-web-app.js"></script>
 <script defer src="js/script.js"></script>
 </body>
 </html>

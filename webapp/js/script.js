@@ -154,11 +154,19 @@ function setupNavigation() {
         }
     };
 
+    document.addEventListener('click', function(e) {
+        const button = e.target.closest('button[data-page]');
+        if (button) {
+            e.preventDefault();
+            const page = button.getAttribute('data-page');
+            navigateTo(page);
+        }
+    });
+
     window.addEventListener('popstate', function() {
         loadPageContent(window.location.pathname);
     });
 }
-
 function loadCurrentPage() {
     loadPageContent(window.location.pathname);
 }
