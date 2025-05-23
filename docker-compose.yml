@@ -167,6 +167,8 @@ services:
   task-entrypoint:
     build: ./task-entrypoint
     container_name: task-entrypoint
+    ports:
+      - "5000:5000"
     environment:
       - DB_HOST=postgres
       - DB_NAME=task_db
