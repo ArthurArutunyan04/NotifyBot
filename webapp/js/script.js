@@ -22,38 +22,38 @@ function showAlert(message, duration = 3000) {
     }
 }
 
-async function apiRequest(endpoint, method = 'GET', body = null) {
-    const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    };
-    const token = localStorage.getItem('jwt');
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    logToDebug(`Sending ${method} request to ${APP_CONFIG.API_BASE_URL}${endpoint}`);
-    try {
-        const response = await fetch(`${APP_CONFIG.API_BASE_URL}${endpoint}`, {
-            method,
-            headers,
-            body: body ? JSON.stringify(body) : null
-        });
-        logToDebug(`Response status: ${response.status}`);
-        if (!response.ok) {
-            let errorMessage = 'Request failed';
-            try {
-                const error = await response.json();
-                errorMessage = error.message || errorMessage;
-            } catch (e) {
-                logToDebug("Failed to parse error response: " + e.message);
-            }
-            throw new Error(errorMessage);
-        }
-        return response.json();
-    } catch (error) {
-        logToDebug("API request failed: " + error.message);
-        throw error;
-    }
-}
-
+// async function apiRequest(endpoint, method = 'GET', body = null) {
+//     const headers = {
+//         'Content-Type': 'application/json',
+//         'Accept': 'application/json'
+//     };
+//     const token = localStorage.getItem('jwt');
+//     if (token) headers['Authorization'] = `Bearer ${token}`;
+//     logToDebug(`Sending ${method} request to ${APP_CONFIG.API_BASE_URL}${endpoint}`);
+//     try {
+//         const response = await fetch(`${APP_CONFIG.API_BASE_URL}${endpoint}`, {
+//             method,
+//             headers,
+//             body: body ? JSON.stringify(body) : null
+//         });
+//         logToDebug(`Response status: ${response.status}`);
+//         if (!response.ok) {
+//             let errorMessage = 'Request failed';
+//             try {
+//                 const error = await response.json();
+//                 errorMessage = error.message || errorMessage;
+//             } catch (e) {
+//                 logToDebug("Failed to parse error response: " + e.message);
+//             }
+//             throw new Error(errorMessage);
+//         }
+//         return response.json();
+//     } catch (error) {
+//         logToDebug("API request failed: " + error.message);
+//         throw error;
+//     }
+// }
+//
 // async function authenticateTelegram() {
 //     logToDebug("Starting authentication in background...");
 //     if (!window.Telegram || !Telegram.WebApp) {
@@ -73,24 +73,9 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 //
 //     logToDebug("Authenticating with user: " + JSON.stringify(user));
 //     try {
-//         const response = await apiRequest('/auth/telegram', 'POST', {
-//             id: user.id,
-//             firstName: user.first_name,
-//             lastName: user.last_name,
-//             username: user.username,
-//             authDate: Telegram.WebApp.initDataUnsafe.auth_date,
-//             hash: Telegram.WebApp.initDataUnsafe.hash
-//         });
-//         logToDebug("Auth response: " + JSON.stringify(response));
-//         localStorage.setItem('jwt', response.token);
-//         localStorage.setItem('user', JSON.stringify({
-//             id: user.id,
-//             username: user.username
-//         }));
-//         Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-//         logToDebug("Авторизация успешна! JWT сохранён.");
+//         logToDebug("Authentication skipped as decorative (no API call)");
 //     } catch (error) {
-//         logToDebug("Auth failed, continuing without auth: " + error.message);
+//         logToDebug("Auth failed (decorative), continuing without auth: " + error.message);
 //     }
 // }
 //
@@ -100,30 +85,25 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
 //             if (!localStorage.getItem('jwt')) {
 //                 await authenticateTelegram();
 //             } else {
-//                 await validateToken();
+//                 logToDebug("Token validation skipped as decorative");
 //             }
 //         } catch (error) {
-//             logToDebug("Auth check failed, continuing without auth: " + error.message);
+//             logToDebug("Auth check failed (decorative), continuing without auth: " + error.message);
 //             localStorage.removeItem('jwt');
 //         }
 //     }
 // }
 //
 // async function validateToken() {
-//     try {
-//         await apiRequest('/auth/validate', 'GET');
-//     } catch (error) {
-//         logToDebug("Token validation failed, continuing without auth: " + error.message);
-//         localStorage.removeItem('jwt');
-//     }
+//     logToDebug("Token validation skipped as decorative");
 // }
-
-function detectPlatform() {
-    if (window.Telegram && Telegram.WebApp) return 'tg';
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-        ? 'mobile'
-        : 'desktop';
-}
+//
+// function detectPlatform() {
+//     if (window.Telegram && Telegram.WebApp) return 'tg';
+//     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+//         ? 'mobile'
+//         : 'desktop';
+// }
 
 function initPlatform() {
     document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
@@ -147,25 +127,25 @@ function initPlatform() {
 function setupNavigation() {
     window.navigateTo = function(page) {
         if (APP_CONFIG.PLATFORM === 'tg') {
-            history.pushState(null, '', page);
+            logToDebug(`Navigating to ${page}`);
+            history.pushState({ page }, '', page);
             loadPageContent(page);
         } else {
             window.location.href = page;
         }
     };
 
-    document.addEventListener('click', function(e) {
-        const button = e.target.closest('button[data-page]');
-        if (button) {
-            e.preventDefault();
-            const page = button.getAttribute('data-page');
-            navigateTo(page);
-        }
+    window.addEventListener('popstate', function(event) {
+        const page = event.state?.page || '/index.html';
+        logToDebug(`Popstate event triggered, loading ${page}`);
+        loadPageContent(page);
     });
+}
 
-    window.addEventListener('popstate', function() {
-        loadPageContent(window.location.pathname);
-    });
+function loadCurrentPage() {
+    const currentPath = window.location.pathname || '/index.html';
+    logToDebug(`Loading current page: ${currentPath}`);
+    loadPageContent(currentPath);
 }
 
 async function loadPageContent(path) {
@@ -173,7 +153,7 @@ async function loadPageContent(path) {
         const pageToLoad = path === '/' || !path || path === '/index.html' ? '/index.html' : path;
         logToDebug(`Attempting to load page: ${pageToLoad}`);
 
-        const response = await fetch(pageToLoad, { cache: 'no-store' }); // Отключаем кэш
+        const response = await fetch(pageToLoad, { cache: 'no-store' });
         if (!response.ok) {
             logToDebug(`Page ${pageToLoad} not found (status: ${response.status}), falling back to index.html`);
             const fallbackResponse = await fetch('/index.html', { cache: 'no-store' });
@@ -241,11 +221,29 @@ function initPageScripts(path) {
     const pageKey = Object.keys(pageScripts).find(key => path.endsWith(key));
     if (pageKey && pageScripts[pageKey]) {
         pageScripts[pageKey]();
+    } else {
+        logToDebug(`No script initialization for path: ${path}`);
     }
 }
 
 function initMainPage() {
     console.log('Main page initialized');
+}
+
+function initAddTaskPage() {
+    console.log('Add task page initialized');
+}
+
+function initActiveTasksPage() {
+    console.log('Active tasks page initialized');
+}
+
+function initCompletedTasksPage() {
+    console.log('Completed tasks page initialized');
+}
+
+function initAnalyticsPage() {
+    console.log('Analytics page initialized');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -256,7 +254,3 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCurrentPage();
     checkAuth().catch(e => logToDebug("Background auth error: " + e.message));
 });
-
-function initAddTaskPage() {}
-function initActiveTasksPage() {}
-function initCompletedTasksPage() {}
