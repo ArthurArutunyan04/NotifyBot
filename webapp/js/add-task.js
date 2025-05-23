@@ -1,15 +1,13 @@
 async function showAlert(message, delay = 2000) {
     alert(message);
-    await new Promise(resolve => setTimeout(resolve, delay));
+    return new Promise(resolve => setTimeout(resolve, delay));
 }
 
 async function sendTask(task) {
     try {
         const response = await fetch('/api/task', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(task)
         });
 
@@ -33,17 +31,22 @@ function initAddTaskPage() {
         event.preventDefault();
 
         const task = {
-            title: document.getElementById('taskTitle').value,
-            description: document.getElementById('taskDescription').value,
-            due_date: document.getElementById('taskDueDate').value,
+            title: document.getElementById('taskTitle').value.trim(),
+            description: document.getElementById('taskDescription').value.trim(),
+            due_date: document.getElementById('taskDueDate').value
         };
 
-        await sendTask(task);
-        await showAlert('Задача добавлена');
-        taskForm.reset();
+        if (!task.title || !task.due_date) {
+            alert('Пожалуйста, заполните обязательные поля: Заголовок и Срок выполнения.');
+            return;
+        }
+
+        const result = await sendTask(task);
+        if (result && result.status === 'success') {
+            await showAlert('Задача добавлена');
+            taskForm.reset();
+        }
     });
 }
 
-if (typeof window !== 'undefined') {
-    window.initAddTaskPage = initAddTaskPage;
-}
+window.addEventListener('DOMContentLoaded', initAddTaskPage);
