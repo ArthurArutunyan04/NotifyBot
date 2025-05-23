@@ -1,9 +1,36 @@
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-item {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
 .task-item.completed {
     opacity: 0.8;
     border-left: 4px solid #388E3C;
 }
 
+.task-item.overdue {
+    border-left: 4px solid #D32F2F;
+    background-color: #ffe6e6;
+}
+
+.task-item.performed {
+    border-left: 4px solid #2196F3;
+}
+
 .completion-date {
     color: #388E3C;
+    font-weight: bold;
+}
+
+.status {
+    color: #D32F2F;
     font-weight: bold;
 }

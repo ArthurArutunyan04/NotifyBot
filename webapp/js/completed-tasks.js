@@ -1,48 +1,21 @@
+// Функция инициализации страницы завершённых задач
 function initCompletedTasksPage() {
-    console.log('Initializing completed tasks page');
-    loadCompletedTasks();
-}
+    console.log('Completed tasks page initialized');
 
-async function loadCompletedTasks() {
-    try {
-        const loader = document.getElementById('loader');
-        const container = document.getElementById('completedTasksContainer');
+    // Используем единый контейнер
+    const tasksContainer = document.getElementById('completedTasksContainer');
+    console.log('Tasks container:', tasksContainer);
 
-        loader.style.display = 'block';
-        container.innerHTML = '';
-
-        const tasks = await apiRequest('/tasks?status=completed');
-
-        if (tasks.length === 0) {
-            container.innerHTML = '<p class="no-tasks">Нет выполненных задач</p>';
-            return;
-        }
-
-        tasks.forEach(task => {
-            const taskElement = document.createElement('div');
-            taskElement.className = 'task-item completed';
-            taskElement.innerHTML = `
-                <h3>${task.title}</h3>
-                <p>${task.description || 'Нет описания'}</p>
-                <div class="task-meta">
-                    <span class="completion-date">Выполнено: ${formatDate(task.completedAt)}</span>
-                </div>
-            `;
-            container.appendChild(taskElement);
-        });
-    } catch (error) {
-        console.error('Error loading completed tasks:', error);
-        showAlert(`Ошибка загрузки задач: ${error.message}`);
-    } finally {
-        document.getElementById('loader').style.display = 'none';
+    if (!tasksContainer) {
+        console.error('Tasks container not found');
+        return;
     }
+
+    const taskItems = tasksContainer.querySelectorAll('.task-item');
+    console.log('Found task items:', taskItems.length);
 }
 
-function formatDate(dateString) {
-    if (!dateString) return 'Дата неизвестна';
-    return new Date(dateString).toLocaleDateString('ru-RU');
-}
-
-if (document.readyState !== 'loading') {
-    initCompletedTasksPage();
+// Экспортируем для использования в script.js
+if (typeof window !== 'undefined') {
+    window.initCompletedTasksPage = initCompletedTasksPage;
 }
