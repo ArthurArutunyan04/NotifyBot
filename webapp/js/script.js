@@ -13,12 +13,17 @@ function logToDebug(message) {
 
 function showAlert(message, duration = 3000) {
     logToDebug("Showing alert: " + message);
-    if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.showAlert(message);
+    try {
+        if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.showAlert === 'function') {
+            Telegram.WebApp.showAlert(message);
+        } else {
+            alert(message);
+        }
         return new Promise(resolve => setTimeout(resolve, duration));
-    } else {
+    } catch (error) {
+        logToDebug("Failed to show Telegram alert, falling back to native alert: " + error.message);
         alert(message);
-        return Promise.resolve();
+        return new Promise(resolve => setTimeout(resolve, duration));
     }
 }
 

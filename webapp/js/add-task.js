@@ -8,7 +8,7 @@ function initAddTaskPage() {
     }
 
     taskForm.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Предотвращаем реальную отправку
+        event.preventDefault();
 
         const taskTitle = document.getElementById('taskTitle').value;
         const taskDescription = document.getElementById('taskDescription').value;
@@ -20,13 +20,9 @@ function initAddTaskPage() {
             taskDueDate
         });
 
-        try {
-            await showAlert('Задача добавлена', 2000);
-            console.log('Alert shown successfully');
-            taskForm.reset();
-        } catch (error) {
-            console.error('Failed to show alert:', error);
-        }
+        await showAlert('Задача добавлена', 2000);
+        console.log('Alert shown successfully');
+        taskForm.reset();
     });
 }
 
