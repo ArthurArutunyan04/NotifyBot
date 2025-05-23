@@ -15,3 +15,12 @@
     color: #D32F2F;
     font-weight: bold;
 }
+.task-item.completed {
+    opacity: 0.8;
+    border-left: 4px solid #388E3C;
+}
+
+.completion-date {
+    color: #388E3C;
+    font-weight: bold;
+}
