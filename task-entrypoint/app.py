@@ -87,5 +87,34 @@ def create_task():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/task/completed", methods=["GET"])
+def get_completed_tasks():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, title, description, due_date, status
+            FROM tasks
+            WHERE status IN (%s, %s, %s)
+            ORDER BY due_date;
+        """, ('Завершено', 'Просрочено', 'Удалена'))
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        tasks = []
+        for row in rows:
+            tasks.append({
+                "id": row[0],
+                "title": row[1],
+                "description": row[2],
+                "due_date": row[3].isoformat(),
+                "status": row[4]
+            })
+
+        return jsonify(tasks), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

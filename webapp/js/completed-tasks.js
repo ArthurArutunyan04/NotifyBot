@@ -1,21 +1,43 @@
-// Функция инициализации страницы завершённых задач
-function initCompletedTasksPage() {
-    console.log('Completed tasks page initialized');
+async function fetchCompletedTasks() {
+    try {
+        const res = await fetch('/api/task/completed');
+        if (!res.ok) throw new Error('Ошибка загрузки завершённых задач');
+        return await res.json();
+    } catch (e) {
+        alert(e.message);
+        return [];
+    }
+}
 
-    // Используем единый контейнер
-    const tasksContainer = document.getElementById('completedTasksContainer');
-    console.log('Tasks container:', tasksContainer);
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
 
-    if (!tasksContainer) {
-        console.error('Tasks container not found');
+function createCompletedTaskHTML(task) {
+    return `
+        <div class="task-item completed" data-task-id="${task.id}">
+            <h3>${task.title}</h3>
+            <p>${task.description ? `Описание: ${task.description}` : ''}</p>
+            <p>Срок: ${formatDate(task.due_date)}</p>
+            <p>Статус: <strong>${task.status}</strong></p>
+        </div>
+    `;
+}
+
+async function renderCompletedTasks() {
+    const tasks = await fetchCompletedTasks();
+    const container = document.getElementById('completedTasksContainer');
+    if (!container) return;
+
+    if (tasks.length === 0) {
+        container.innerHTML = '<p>Нет выполненных задач.</p>';
         return;
     }
 
-    const taskItems = tasksContainer.querySelectorAll('.task-item');
-    console.log('Found task items:', taskItems.length);
+    container.innerHTML = tasks.map(createCompletedTaskHTML).join('');
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
 }
 
-// Экспортируем для использования в script.js
-if (typeof window !== 'undefined') {
-    window.initCompletedTasksPage = initCompletedTasksPage;
-}
+window.onload = renderCompletedTasks;
