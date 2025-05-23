@@ -8,15 +8,20 @@ function showMessage(msg) {
 
 async function fetchTasks() {
     try {
-        const res = await fetch('/api/tasks');
+        const res = await fetch('/api/task');
         if (!res.ok) throw new Error('Ошибка загрузки задач');
+        sessionStorage.removeItem('reloadedOnce');
         return await res.json();
     } catch (e) {
         alert(e.message);
-        setTimeout(() => location.reload(), 1000);
+        if (!sessionStorage.getItem('reloadedOnce')) {
+            sessionStorage.setItem('reloadedOnce', 'true');
+            location.reload();
+        }
         return [];
     }
 }
+
 
 
 function formatDate(dateStr) {
