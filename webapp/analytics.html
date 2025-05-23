@@ -31,17 +31,17 @@
 
     <div class="content">
         <div class="chart-container">
-            <h3>Распределение задач по статусам (круговая диаграмма)</h3>
+            <h3>Распределение задач по статусам</h3>
             <canvas id="statusPieChart"></canvas>
         </div>
 
         <div class="chart-container">
-            <h3>Время выполнения задач (гистограмма)</h3>
+            <h3>Время выполнения задач</h3>
             <canvas id="timeBarChart"></canvas>
         </div>
 
         <div class="chart-container">
-            <h3>Распределение задач по статусам (столбчатая диаграмма)</h3>
+            <h3>Распределение задач по статусам</h3>
             <canvas id="statusBarChart"></canvas>
         </div>
 
@@ -59,7 +59,6 @@
         window.location.href = url;
     }
 
-    // Круговая диаграмма
     new Chart(document.getElementById('statusPieChart'), {
         type: 'pie',
         data: {
@@ -92,7 +91,6 @@
         }
     });
 
-    // Время выполнения задач (гистограмма)
     new Chart(document.getElementById('timeBarChart'), {
         type: 'bar',
         data: {
@@ -117,7 +115,6 @@
         }
     });
 
-    // Столбчатая диаграмма по статусам
     new Chart(document.getElementById('statusBarChart'), {
         type: 'bar',
         data: {
@@ -142,7 +139,6 @@
         }
     });
 
-    // Активность по дням недели
     new Chart(document.getElementById('weeklyActivityChart'), {
         type: 'bar',
         data: {
