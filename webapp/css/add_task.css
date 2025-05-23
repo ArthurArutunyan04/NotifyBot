@@ -14,17 +14,8 @@ textarea {
     min-height: 80px;
 }
 
-@keyframes typing {
-    from { width: 0; }
-    to { width: 17ch; }
-}
-
-
-
 @media (max-width: 768px) {
     .submit-btn {
         margin-left: 5%;
     }
 }
-
-

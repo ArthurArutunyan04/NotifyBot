@@ -1,44 +1,35 @@
 function initAddTaskPage() {
-    const form = document.getElementById('taskForm');
-    if (!form) return;
+    console.log('Add task page initialized');
 
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('taskDueDate').min = today;
+    const taskForm = document.getElementById('taskForm');
+    if (!taskForm) {
+        console.error('Task form not found');
+        return;
+    }
 
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        await handleFormSubmit(form);
+    taskForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Предотвращаем реальную отправку
+
+        const taskTitle = document.getElementById('taskTitle').value;
+        const taskDescription = document.getElementById('taskDescription').value;
+        const taskDueDate = document.getElementById('taskDueDate').value;
+
+        console.log('Form submitted (decorative):', {
+            taskTitle,
+            taskDescription,
+            taskDueDate
+        });
+
+        try {
+            await showAlert('Задача добавлена', 2000);
+            console.log('Alert shown successfully');
+            taskForm.reset();
+        } catch (error) {
+            console.error('Failed to show alert:', error);
+        }
     });
 }
 
-async function handleFormSubmit(form) {
-    const submitBtn = form.querySelector('button[type="submit"]');
-    submitBtn.disabled = true;
-
-    try {
-        const taskData = {
-            title: document.getElementById('taskTitle').value.trim(),
-            description: document.getElementById('taskDescription').value.trim(),
-            deadline: document.getElementById('taskDueDate').value
-        };
-
-        if (!taskData.title) {
-            throw new Error('Введите название задачи');
-        }
-
-        await apiRequest('/tasks', 'POST', taskData);
-        showAlert('Задача успешно добавлена!');
-        form.reset();
-
-
-    } catch (error) {
-        console.error('Error adding task:', error);
-        showAlert(`Ошибка: ${error.message}`);
-    } finally {
-        submitBtn.disabled = false;
-    }
-}
-
-if (document.readyState !== 'loading') {
-    initAddTaskPage();
+if (typeof window !== 'undefined') {
+    window.initAddTaskPage = initAddTaskPage;
 }

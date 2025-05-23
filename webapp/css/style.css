@@ -39,6 +39,7 @@ header {
 
 .bot-name-container {
     overflow: hidden;
+    max-width: 100%;
 }
 
 .bot-name {
@@ -46,24 +47,64 @@ header {
     font-size: 30px;
     font-weight: bold;
     white-space: nowrap;
-    width: 0;
     padding-left: 12px;
-    animation: typing 2s steps(20) 1 forwards;
+    opacity: 0;
+    animation: typing 2s steps(20) 1 forwards, fadeIn 0.5s 1.5s forwards;
 }
 
-.checkmark{
+body.platform-tg .bot-name-container {
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+body.platform-tg .bot-name {
+    font-size: 28px;
+    padding-left: 10px;
+    animation: typing 1.5s steps(20) 1 forwards, fadeIn 0.5s 1s forwards;
+}
+
+body.platform-mobile .bot-name-container {
+    background-color: #28a745;
+    border-bottom: 2px solid #1b5e20;
+    padding: 3px 8px;
+}
+
+body.platform-mobile .bot-name {
+    font-size: 26px;
+    padding-left: 8px;
+    animation: typing 2s steps(20) 1 forwards, fadeIn 0.5s 1.5s forwards;
+}
+
+body.platform-desktop .bot-name-container {
+    background-color: #1565C0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 5px 15px;
+}
+
+body.platform-desktop .bot-name {
+    font-size: 32px;
+    padding-left: 15px;
+    animation: typing 2.5s steps(20) 1 forwards, fadeIn 0.5s 2s forwards;
+}
+
+.checkmark {
     color: #28a745;
     font-size: 40px;
     font-weight: bold;
     white-space: nowrap;
-    width: 0;
     padding-left: 2px;
-    animation: typing 2s steps(20) 1 forwards;
+    opacity: 0;
+    animation: fadeIn 0.5s 2s forwards;
 }
 
 @keyframes typing {
     from { width: 0; }
-    to { width: 10ch; }
+    to { width: 100%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .content {
@@ -163,22 +204,6 @@ body.platform-desktop .desktop-content {
     flex-grow: 1;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .form-container {
     width: 90%;
     max-width: 500px;
@@ -212,7 +237,6 @@ body.platform-desktop .desktop-content {
 .submit-btn {
     background-color: #388E3C;
     width: 100%;
-
 }
 
 .tasks-container {

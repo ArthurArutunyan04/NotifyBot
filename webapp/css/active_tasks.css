@@ -15,8 +15,3 @@
     color: #D32F2F;
     font-weight: bold;
 }
-
-@keyframes typing {
-    from { width: 0; }
-    to { width: 25ch; }
-}
