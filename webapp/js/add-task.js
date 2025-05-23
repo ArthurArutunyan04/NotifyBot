@@ -1,115 +1,52 @@
-function showMessage(msg) {
-    if (window.Telegram && Telegram.WebApp && Telegram.WebApp.showAlert) {
-        Telegram.WebApp.showAlert(msg);
-    } else {
-        alert(msg);
-    }
+async function showAlert(message, delay = 2000) {
+    alert(message);
+    return new Promise(resolve => setTimeout(resolve, delay));
 }
 
-async function fetchTasks() {
+async function sendTask(task) {
     try {
-        const res = await fetch('/api/task');
-        if (!res.ok) throw new Error('Ошибка загрузки задач');
-        return await res.json();
-    } catch (e) {
-        showMessage(e.message);
-        return [];
-    }
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    if (isNaN(d)) return '';
-    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function createTaskHTML(task) {
-    return `
-        <div class="task-item" data-task-id="${task.id}">
-            <h3>${task.title}</h3>
-            <p>${task.description ? `Описание: ${task.description}` : ''}</p>
-            <div class="task-meta">
-                <span class="due-date">Срок выполнения: ${formatDate(task.due_date)}</span>
-                <button class="btn task-action-btn complete-btn" data-action="complete" data-id="${task.id}">✓</button>
-                <button class="btn task-action-btn delete-btn" data-action="delete" data-id="${task.id}">❌</button>
-            </div>
-        </div>
-    `;
-}
-
-async function renderTasks() {
-    const tasks = await fetchTasks();
-    const html = tasks.length ? tasks.map(createTaskHTML).join('') : '<p>Нет активных задач.</p>';
-
-    const containerIds = ['activeTasksContainer', 'activeTasksContainerMobile', 'activeTasksContainerDesktop'];
-    containerIds.forEach(id => {
-        const container = document.getElementById(id);
-        if (container) {
-            container.innerHTML = html;
-        }
-    });
-
-    const loader = document.getElementById('loader');
-    if (loader) loader.style.display = 'none';
-
-    // После рендера навесим обработчики кнопок
-    attachTaskButtonsHandlers();
-}
-
-async function updateTaskStatus(id, status) {
-    try {
-        const res = await fetch(`/api/task/${id}`, {
-            method: 'PATCH',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ status })
+        const response = await fetch('/api/task', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(task)
         });
-        if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || 'Ошибка обновления задачи');
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Ошибка при добавлении задачи');
         }
-        await renderTasks();
-    } catch (e) {
-        showMessage(e.message);
+
+        return await response.json();
+    } catch (err) {
+        alert('Ошибка: ' + err.message);
+        console.error(err);
     }
 }
 
-function completeTask(id) {
-    updateTaskStatus(id, 'Завершено');
-}
+function initAddTaskPage() {
+    const taskForm = document.getElementById('taskForm');
+    if (!taskForm) return;
 
-function deleteTask(id) {
-    if (confirm('Вы уверены, что хотите удалить задачу?')) {
-        updateTaskStatus(id, 'Удалена');
-    }
-}
+    taskForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-function attachTaskButtonsHandlers() {
-    const buttons = document.querySelectorAll('.task-action-btn');
-    buttons.forEach(btn => {
-        btn.onclick = () => {
-            const id = btn.dataset.id;
-            const action = btn.dataset.action;
-            if (!id || !action) return;
-
-            if (action === 'complete') {
-                completeTask(id);
-            } else if (action === 'delete') {
-                deleteTask(id);
-            }
+        const task = {
+            title: document.getElementById('taskTitle').value.trim(),
+            description: document.getElementById('taskDescription').value.trim(),
+            due_date: document.getElementById('taskDueDate').value
         };
+
+        if (!task.title || !task.due_date) {
+            alert('Пожалуйста, заполните обязательные поля: Заголовок и Срок выполнения.');
+            return;
+        }
+
+        const result = await sendTask(task);
+        if (result && result.status === 'success') {
+            await showAlert('Задача добавлена');
+            taskForm.reset();
+        }
     });
 }
 
-function navigateTo(url) {
-    window.location.href = url;
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    renderTasks();
-
-    const backBtn = document.querySelector('.back-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', () => navigateTo('index.html'));
-    }
-});
+window.addEventListener('DOMContentLoaded', initAddTaskPage);
