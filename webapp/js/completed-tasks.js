@@ -41,3 +41,6 @@ async function renderCompletedTasks() {
 }
 
 window.onload = renderCompletedTasks;
+function navigateTo(url) {
+    window.location.assign(url);
+}

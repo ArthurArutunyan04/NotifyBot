@@ -72,3 +72,6 @@ function deleteTask(id) {
 }
 
 window.onload = renderTasks;
+function navigateTo(url) {
+    window.location.assign(url);
+}

@@ -78,3 +78,6 @@ function initAddTaskPage() {
 }
 
 window.addEventListener('DOMContentLoaded', initAddTaskPage);
+function navigateTo(url) {
+    window.location.assign(url);
+}
