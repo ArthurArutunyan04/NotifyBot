@@ -1,52 +1,75 @@
-async function showAlert(message, delay = 2000) {
-    alert(message);
-    return new Promise(resolve => setTimeout(resolve, delay));
-}
-
-async function sendTask(task) {
+async function fetchTasks() {
     try {
-        const response = await fetch('/api/task', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(task)
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.error || 'Ошибка при добавлении задачи');
-        }
-
-        return await response.json();
-    } catch (err) {
-        alert('Ошибка: ' + err.message);
-        console.error(err);
+        const res = await fetch('/api/tasks');
+        if (!res.ok) throw new Error('Ошибка загрузки задач');
+        return await res.json();
+    } catch (e) {
+        alert(e.message);
+        return [];
     }
 }
 
-function initAddTaskPage() {
-    const taskForm = document.getElementById('taskForm');
-    if (!taskForm) return;
-
-    taskForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const task = {
-            title: document.getElementById('taskTitle').value.trim(),
-            description: document.getElementById('taskDescription').value.trim(),
-            due_date: document.getElementById('taskDueDate').value
-        };
-
-        if (!task.title || !task.due_date) {
-            alert('Пожалуйста, заполните обязательные поля: Заголовок и Срок выполнения.');
-            return;
-        }
-
-        const result = await sendTask(task);
-        if (result && result.status === 'success') {
-            await showAlert('Задача добавлена');
-            taskForm.reset();
-        }
-    });
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-window.addEventListener('DOMContentLoaded', initAddTaskPage);
+function createTaskHTML(task) {
+    return `
+        <div class="task-item" data-task-id="${task.id}">
+            <h3>${task.title}</h3>
+            <p>${task.description ? `Описание: ${task.description}` : ''}</p>
+            <div class="task-meta">
+                <span class="due-date">Срок выполнения: ${formatDate(task.due_date)}</span>
+                <button class="btn task-action-btn complete-btn" onclick="completeTask(${task.id})">✓</button>
+                <button class="btn task-action-btn delete-btn" onclick="deleteTask(${task.id})">❌</button>
+            </div>
+        </div>
+    `;
+}
+
+async function renderTasks() {
+    const tasks = await fetchTasks();
+    const html = tasks.map(createTaskHTML).join('');
+
+    const containers = [
+        document.getElementById('activeTasksContainer'),
+        document.getElementById('activeTasksContainerMobile'),
+        document.getElementById('activeTasksContainerDesktop')
+    ];
+
+    containers.forEach(container => {
+        container.innerHTML = html || '<p>Нет активных задач.</p>';
+    });
+
+    // Спрятать или показать loader
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
+}
+
+async function updateTaskStatus(id, status) {
+    try {
+        const res = await fetch(`/api/task/${id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status})
+        });
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || 'Ошибка обновления задачи');
+        }
+        await renderTasks();
+    } catch (e) {
+        alert(e.message);
+    }
+}
+
+function completeTask(id) {
+    updateTaskStatus(id, 'Завершено');
+}
+
+function deleteTask(id) {
+    updateTaskStatus(id, 'Удалена');
+}
+
+window.onload = renderTasks;
