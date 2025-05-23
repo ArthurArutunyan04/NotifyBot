@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Текущие задачи - NotifyBot</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/active_tasks.css">
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/active_tasks.css" />
 </head>
 <body class="platform-tg">
 <div class="app-container">
@@ -19,129 +19,17 @@
         <div class="tg-content">
             <div id="loader" class="loader"></div>
             <div class="tasks-container" id="activeTasksContainer">
-                <!-- Задача 1 -->
-                <div class="task-item" data-task-id="1">
-                    <h3>Задача1</h3>
-                    <p>Описание: описание</p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 28.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(1)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(1)">❌</button>
-                    </div>
-                </div>
-
-                <!-- Задача 2 -->
-                <div class="task-item" data-task-id="2">
-                    <h3>Задача2</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 30.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(2)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(2)">❌</button>
-                    </div>
-                </div>
-
-                <!-- Задача 3 -->
-                <div class="task-item" data-task-id="3">
-                    <h3>задача3</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 01.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(3)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(3)">❌</button>
-                    </div>
-                </div>
-
-                <!-- Задача 4 -->
-                <div class="task-item" data-task-id="4">
-                    <h3>Задача4</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 03.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(4)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(4)">❌</button>
-                    </div>
-                </div>
+                <!-- Здесь пока нет задач -->
             </div>
         </div>
         <div class="mobile-content">
             <div class="tasks-container" id="activeTasksContainerMobile">
-                <div class="task-item" data-task-id="1">
-                    <h3>Задача1</h3>
-                    <p>Описание: описание</p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 28.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(1)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(1)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="2">
-                    <h3>Задача2</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 30.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(2)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(2)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="3">
-                    <h3>задача3</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 01.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(3)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(3)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="4">
-                    <h3>Задача4</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 03.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(4)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(4)">❌</button>
-                    </div>
-                </div>
+                <!-- Здесь пока нет задач -->
             </div>
         </div>
         <div class="desktop-content">
             <div class="tasks-container" id="activeTasksContainerDesktop">
-                <div class="task-item" data-task-id="1">
-                    <h3>Задача1</h3>
-                    <p>Описание: описание</p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 28.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(1)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(1)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="2">
-                    <h3>Задача2</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 30.05.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(2)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(2)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="3">
-                    <h3>задача3</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 01.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(3)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(3)">❌</button>
-                    </div>
-                </div>
-                <div class="task-item" data-task-id="4">
-                    <h3>Задача4</h3>
-                    <p></p>
-                    <div class="task-meta">
-                        <span class="due-date">Срок выполнения: 03.06.2025</span>
-                        <button class="btn task-action-btn complete-btn" onclick="completeTask(4)">✓</button>
-                        <button class="btn task-action-btn delete-btn" onclick="deleteTask(4)">❌</button>
-                    </div>
-                </div>
+                <!-- Здесь пока нет задач -->
             </div>
         </div>
         <button onclick="navigateTo('index.html')" class="btn back-btn">На главную</button>

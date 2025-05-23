@@ -8,14 +8,16 @@ function showMessage(msg) {
 
 async function fetchTasks() {
     try {
-        const res = await fetch('/api/task');
+        const res = await fetch('/api/tasks');
         if (!res.ok) throw new Error('Ошибка загрузки задач');
         return await res.json();
     } catch (e) {
-        showMessage(e.message);
+        alert(e.message);
+        setTimeout(() => location.reload(), 1000);
         return [];
     }
 }
+
 
 function formatDate(dateStr) {
     if (!dateStr) return '';
