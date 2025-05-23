@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Текущие задачи - NotifyBot</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/active_tasks.css">
+    <link rel="stylesheet" href="css/active.css">
 </head>
 <body>
 <div class="app-container">
@@ -16,49 +16,135 @@
     </header>
 
     <div class="content">
-        <div id="loader" class="loader"></div>
-        <div class="tasks-container" id="activeTasksContainer">
-            <!-- Задача 1 -->
-            <div class="task-item" data-task-id="1">
-                <h3>Задача1</h3>
-                <p>Описание: описание</p>
-                <div class="task-meta">
-                    <span class="due-date">Срок выполнения: 28.05.2025</span>
-                    <button class="btn complete-btn" onclick="completeTask(1)">Завершить</button>
-                    <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(1)">Удалить</button>
+        <div class="tg-content">
+            <div id="loader" class="loader"></div>
+            <div class="tasks-container" id="activeTasksContainer">
+                <!-- Задача 1 -->
+                <div class="task-item" data-task-id="1">
+                    <h3>Задача1</h3>
+                    <p>Описание: описание</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 28.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(1)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(1)">Удалить</button>
+                    </div>
+                </div>
+
+                <!-- Задача 2 -->
+                <div class="task-item" data-task-id="2">
+                    <h3>Планирование встречи</h3>
+                    <p>Описание: Организовать встречу с командой</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 30.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(2)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(2)">Удалить</button>
+                    </div>
+                </div>
+
+                <!-- Задача 3 -->
+                <div class="task-item" data-task-id="3">
+                    <h3>Подготовка отчета</h3>
+                    <p>Описание: Собрать данные за последний квартал</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 01.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(3)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(3)">Удалить</button>
+                    </div>
+                </div>
+
+                <!-- Задача 4 -->
+                <div class="task-item" data-task-id="4">
+                    <h3>Тестирование приложения</h3>
+                    <p>Описание: Проверить новые функции</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 03.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(4)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(4)">Удалить</button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Задача 2 -->
-            <div class="task-item" data-task-id="2">
-                <h3>Планирование встречи</h3>
-                <p>Описание: Организовать встречу с командой</p>
-                <div class="task-meta">
-                    <span class="due-date">Срок выполнения: 30.05.2025</span>
-                    <button class="btn complete-btn" onclick="completeTask(2)">Завершить</button>
-                    <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(2)">Удалить</button>
+        </div>
+        <div class="mobile-content">
+            <div id="loader" class="loader"></div>
+            <div class="tasks-container" id="activeTasksContainerMobile">
+                <!-- Повторяем задачи для мобильной версии -->
+                <div class="task-item" data-task-id="1">
+                    <h3>Задача1</h3>
+                    <p>Описание: описание</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 28.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(1)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(1)">Удалить</button>
+                    </div>
+                </div>
+                <div class="task-item" data-task-id="2">
+                    <h3>Планирование встречи</h3>
+                    <p>Описание: Организовать встречу с командой</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 30.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(2)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(2)">Удалить</button>
+                    </div>
+                </div>
+                <div class="task-item" data-task-id="3">
+                    <h3>Подготовка отчета</h3>
+                    <p>Описание: Собрать данные за последний квартал</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 01.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(3)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(3)">Удалить</button>
+                    </div>
+                </div>
+                <div class="task-item" data-task-id="4">
+                    <h3>Тестирование приложения</h3>
+                    <p>Описание: Проверить новые функции</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 03.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(4)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(4)">Удалить</button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Задача 3 -->
-            <div class="task-item" data-task-id="3">
-                <h3>Подготовка отчета</h3>
-                <p>Описание: Собрать данные за последний квартал</p>
-                <div class="task-meta">
-                    <span class="due-date">Срок выполнения: 01.06.2025</span>
-                    <button class="btn complete-btn" onclick="completeTask(3)">Завершить</button>
-                    <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(3)">Удалить</button>
+        </div>
+        <div class="desktop-content">
+            <div id="loader" class="loader"></div>
+            <div class="tasks-container" id="activeTasksContainerDesktop">
+                <!-- Повторяем задачи для десктопной версии -->
+                <div class="task-item" data-task-id="1">
+                    <h3>Задача1</h3>
+                    <p>Описание: описание</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 28.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(1)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(1)">Удалить</button>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Задача 4 -->
-            <div class="task-item" data-task-id="4">
-                <h3>Тестирование приложения</h3>
-                <p>Описание: Проверить новые функции</p>
-                <div class="task-meta">
-                    <span class="due-date">Срок выполнения: 03.06.2025</span>
-                    <button class="btn complete-btn" onclick="completeTask(4)">Завершить</button>
-                    <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(4)">Удалить</button>
+                <div class="task-item" data-task-id="2">
+                    <h3>Планирование встречи</h3>
+                    <p>Описание: Организовать встречу с командой</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 30.05.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(2)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(2)">Удалить</button>
+                    </div>
+                </div>
+                <div class="task-item" data-task-id="3">
+                    <h3>Подготовка отчета</h3>
+                    <p>Описание: Собрать данные за последний квартал</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 01.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(3)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(3)">Удалить</button>
+                    </div>
+                </div>
+                <div class="task-item" data-task-id="4">
+                    <h3>Тестирование приложения</h3>
+                    <p>Описание: Проверить новые функции</p>
+                    <div class="task-meta">
+                        <span class="due-date">Срок выполнения: 03.06.2025</span>
+                        <button class="btn complete-btn" onclick="completeTask(4)">Завершить</button>
+                        <button class="btn" style="background-color: #D32F2F; margin-left: 5px;" onclick="deleteTask(4)">Удалить</button>
+                    </div>
                 </div>
             </div>
         </div>

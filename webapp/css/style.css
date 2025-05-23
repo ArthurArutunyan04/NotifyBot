@@ -289,3 +289,7 @@ body.platform-desktop .desktop-content {
 .content.page-transition {
     opacity: 0;
 }
+
+.loader {
+    display: none;
+}
