@@ -5,7 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Аналитика - NotifyBot</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/analytics.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        .chart-container {
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        canvas {
+            max-height: 300px;
+        }
+    </style>
 
 </head>
 <body>
@@ -17,14 +30,151 @@
     </header>
 
     <div class="content">
-        <div class="tg-content" id="tgContent">
-            <button onclick="navigateTo('index.html')" class="btn back-btn">На главную</button>
+        <div class="chart-container">
+            <h3>Распределение задач по статусам (круговая диаграмма)</h3>
+            <canvas id="statusPieChart"></canvas>
         </div>
+
+        <div class="chart-container">
+            <h3>Время выполнения задач (гистограмма)</h3>
+            <canvas id="timeBarChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Распределение задач по статусам (столбчатая диаграмма)</h3>
+            <canvas id="statusBarChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h3>Активность по дням недели</h3>
+            <canvas id="weeklyActivityChart"></canvas>
+        </div>
+
+        <button onclick="navigateTo('index.html')" class="btn back-btn">На главную</button>
     </div>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="js/api.js"></script>
-<script src="js/analytics.js"></script>
+<script>
+    function navigateTo(url) {
+        window.location.href = url;
+    }
+
+    // Круговая диаграмма
+    new Chart(document.getElementById('statusPieChart'), {
+        type: 'pie',
+        data: {
+            labels: ["Выполнена", "Просрочена", "Удалена"],
+            datasets: [{
+                data: [71.4, 14.3, 14.3],
+                backgroundColor: ["#388E3C", "#D32F2F", "#FF9800"],
+                borderColor: ["#ffffff", "#ffffff", "#ffffff"],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: {
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Распределение задач по статусам',
+                    font: {
+                        size: 14
+                    }
+                }
+            }
+        }
+    });
+
+    // Время выполнения задач (гистограмма)
+    new Chart(document.getElementById('timeBarChart'), {
+        type: 'bar',
+        data: {
+            labels: ["0 часов", "24 часа"],
+            datasets: [{
+                label: "Количество задач",
+                data: [3, 2],
+                backgroundColor: "steelblue",
+                borderColor: "#ffffff",
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: "Время выполнения (часы)" }},
+                y: { beginAtZero: true, title: { display: true, text: "Количество задач" }, ticks: { stepSize: 1 }}
+            },
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: "Время выполнения задач", font: { size: 14 }}
+            }
+        }
+    });
+
+    // Столбчатая диаграмма по статусам
+    new Chart(document.getElementById('statusBarChart'), {
+        type: 'bar',
+        data: {
+            labels: ["Выполнена", "Просрочена", "Удалена"],
+            datasets: [{
+                label: "Доля от общего числа",
+                data: [71.4, 14.3, 14.3],
+                backgroundColor: ["#388E3C", "#D32F2F", "#FF9800"],
+                borderColor: ["#ffffff", "#ffffff", "#ffffff"],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: "Статус задачи" }},
+                y: { beginAtZero: true, max: 100, title: { display: true, text: "Доля от общего числа (%)" }}
+            },
+            plugins: {
+                legend: { display: false },
+                title: { display: true, text: "Распределение задач по статусам", font: { size: 14 }}
+            }
+        }
+    });
+
+    // Активность по дням недели
+    new Chart(document.getElementById('weeklyActivityChart'), {
+        type: 'bar',
+        data: {
+            labels: ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"],
+            datasets: [
+                {
+                    label: "Создано задач",
+                    data: [1, 1, 2, 0, 1, 1, 1],
+                    backgroundColor: "#2196F3",
+                    borderColor: "#ffffff",
+                    borderWidth: 1
+                },
+                {
+                    label: "Выполнено задач",
+                    data: [0, 1, 1, 0, 1, 1, 1],
+                    backgroundColor: "#388E3C",
+                    borderColor: "#ffffff",
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: "День недели" }},
+                y: { beginAtZero: true, title: { display: true, text: "Количество задач" }, ticks: { stepSize: 1 }}
+            },
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: "Активность по дням недели", font: { size: 14 }}
+            }
+        }
+    });
+</script>
 </body>
 </html>
