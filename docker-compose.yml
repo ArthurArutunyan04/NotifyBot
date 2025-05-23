@@ -166,18 +166,16 @@ services:
 
   task-entrypoint:
     build: ./task-entrypoint
-    container_name: task-entrypoint
     environment:
       - DB_HOST=postgres
       - DB_NAME=task_db
       - DB_USER=taskuser
       - DB_PASSWORD=password123
+    ports:
+      - "5000:5000"
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - backend
-    restart: unless-stopped
 
 
 volumes:
