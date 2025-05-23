@@ -16,7 +16,7 @@ def get_db_connection():
         dbname=DB_NAME, user=DB_USER, password=DB_PASSWORD, host=DB_HOST
     )
 
-@app.route("/api/tasks", methods=["GET"])
+@app.route("/api/task", methods=["GET"])
 def get_tasks():
     try:
         conn = get_db_connection()
