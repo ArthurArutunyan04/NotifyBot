@@ -167,9 +167,6 @@ function setupNavigation() {
         loadPageContent(window.location.pathname);
     });
 }
-function loadCurrentPage() {
-    loadPageContent(window.location.pathname);
-}
 
 async function loadPageContent(path) {
     try {
