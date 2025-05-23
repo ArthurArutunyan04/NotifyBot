@@ -23,7 +23,28 @@ async function sendTask(task) {
     }
 }
 
+function setMinDueDate() {
+    const dueDateInput = document.getElementById('taskDueDate');
+    if (!dueDateInput) return;
+
+    const today = new Date();
+    const minDate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+
+    // Форматируем дату в yyyy-mm-dd для input[type="date"]
+    const yyyy = minDate.getFullYear();
+    const mm = String(minDate.getMonth() + 1).padStart(2, '0');
+    const dd = String(minDate.getDate()).padStart(2, '0');
+    dueDateInput.min = `${yyyy}-${mm}-${dd}`;
+
+    // При желании, можно очистить текущее значение, если оно меньше min
+    if (dueDateInput.value && dueDateInput.value < dueDateInput.min) {
+        dueDateInput.value = dueDateInput.min;
+    }
+}
+
 function initAddTaskPage() {
+    setMinDueDate();
+
     const taskForm = document.getElementById('taskForm');
     if (!taskForm) return;
 
@@ -41,10 +62,17 @@ function initAddTaskPage() {
             return;
         }
 
+        // Проверяем, что выбранная дата >= min
+        if (task.due_date < document.getElementById('taskDueDate').min) {
+            alert(`Дата должна быть не ранее ${document.getElementById('taskDueDate').min}`);
+            return;
+        }
+
         const result = await sendTask(task);
         if (result && result.status === 'success') {
             await showAlert('Задача добавлена');
             taskForm.reset();
+            setMinDueDate();
         }
     });
 }

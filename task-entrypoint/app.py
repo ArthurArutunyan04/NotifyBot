@@ -62,7 +62,6 @@ def update_task_status(task_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Существующий POST /api/task для создания задачи с дефолтным статусом "Выполняется"
 @app.route("/api/task", methods=["POST"])
 def create_task():
     data = request.get_json()
@@ -113,6 +112,62 @@ def get_completed_tasks():
             })
 
         return jsonify(tasks), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+from datetime import datetime
+
+@app.route("/api/tasks/statistics", methods=["GET"])
+def get_task_statistics():
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT status, COUNT(*) FROM tasks
+            GROUP BY status;
+        """)
+        status_counts = dict(cur.fetchall())
+
+        cur.execute("""
+            SELECT
+                SUM(CASE WHEN completed_at IS NOT NULL AND EXTRACT(EPOCH FROM (completed_at - created_at))/3600 <= 0 THEN 1 ELSE 0 END) as zero_hours,
+                SUM(CASE WHEN completed_at IS NOT NULL AND EXTRACT(EPOCH FROM (completed_at - created_at))/3600 > 0 THEN 1 ELSE 0 END) as more_than_zero_hours
+            FROM tasks
+            WHERE completed_at IS NOT NULL;
+        """)
+        time_row = cur.fetchone()
+        time_data = {
+            "zero_hours": time_row[0] or 0,
+            "more_than_zero_hours": time_row[1] or 0
+        }
+
+        cur.execute("""
+            SELECT EXTRACT(DOW FROM created_at) as dow, COUNT(*)
+            FROM tasks
+            GROUP BY dow;
+        """)
+        created_by_day = {int(row[0]): row[1] for row in cur.fetchall()}
+
+        cur.execute("""
+            SELECT EXTRACT(DOW FROM completed_at) as dow, COUNT(*)
+            FROM tasks
+            WHERE completed_at IS NOT NULL
+            GROUP BY dow;
+        """)
+        completed_by_day = {int(row[0]): row[1] for row in cur.fetchall()}
+
+        cur.close()
+        conn.close()
+
+        return jsonify({
+            "statusCounts": status_counts,
+            "timeData": time_data,
+            "createdByDay": created_by_day,
+            "completedByDay": completed_by_day
+        }), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
