@@ -52,3 +52,4 @@ function initActiveTasksPage() {
 if (typeof window !== 'undefined') {
     window.initActiveTasksPage = initActiveTasksPage;
 }
+

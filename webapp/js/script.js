@@ -111,22 +111,30 @@ function detectPlatform() {
 }
 
 function initPlatform() {
-    document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
+    // Удаляем существующие классы платформы
+    document.body.classList.remove('platform-tg', 'platform-mobile', 'platform-desktop');
 
-    if (APP_CONFIG.PLATFORM === 'tg') {
-        const webApp = Telegram.WebApp;
-        webApp.ready();
-        webApp.expand();
-
-        webApp.BackButton.show();
-        webApp.BackButton.onClick(() => {
-            if (window.history.length > 1) {
-                history.back();
-            } else {
-                webApp.close();
-            }
-        });
+    if (window.Telegram && Telegram.WebApp && Telegram.WebApp.platform) {
+        document.body.classList.add('platform-tg');
+        APP_CONFIG.PLATFORM = 'tg';
+    } else if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.body.classList.add('platform-mobile');
+        APP_CONFIG.PLATFORM = 'mobile';
+    } else {
+        document.body.classList.add('platform-desktop');
+        APP_CONFIG.PLATFORM = 'desktop';
     }
+    logToDebug(`Platform set to ${APP_CONFIG.PLATFORM}`);
+}
+function navigateTo(path) {
+    logToDebug(`Navigating to ${path}`);
+    if (path === window.location.pathname) {
+        logToDebug(`Already on ${path}, no navigation needed`);
+        return;
+    }
+    loadPageContent(path);
+    window.history.pushState({}, '', path);
+    initPlatform(); // Добавляем вызов initPlatform после навигации
 }
 
 function setupNavigation() {
@@ -257,5 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initPlatform();
     setupNavigation();
     loadCurrentPage();
+    navigateTo()
     checkAuth().catch(e => logToDebug("Background auth error: " + e.message));
 });

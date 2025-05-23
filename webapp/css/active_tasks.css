@@ -1,26 +1,36 @@
 .task-item {
     position: relative;
-    padding-right: 50px;
+    padding-right: 60px;
+}
+
+.task-action-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px !important; /* Принудительно фиксируем ширину */
+    height: 24px !important; /* Принудительно фиксируем высоту */
+    padding: 0 !important; /* Убираем внутренние отступы */
+    font-size: 14px !important; /* Размер символов */
+    line-height: 24px !important; /* Центрируем символы по вертикали */
+    text-align: center !important;
+    border-radius: 4px;
+    margin: 0 2px;
+    box-sizing: border-box; /* Учитываем границы в размерах */
+    border: none; /* Убираем возможные границы */
+    font-family: inherit; /* Унифицируем шрифт */
 }
 
 .complete-btn {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: auto;
+    right: 34px;
+    background-color: #388E3C;
+}
+
+.delete-btn {
+    right: 5px;
+    background-color: #D32F2F;
 }
 
 .due-date {
     color: #D32F2F;
-    font-weight: bold;
-}
-.task-item.completed {
-    opacity: 0.8;
-    border-left: 4px solid #388E3C;
-}
-
-.completion-date {
-    color: #388E3C;
     font-weight: bold;
 }
