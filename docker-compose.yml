@@ -164,6 +164,22 @@ services:
 #      - backend
 #    restart: unless-stopped
 
+  task-entrypoint:
+    build: ./task-entrypoint
+    container_name: task-entrypoint
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=task_db
+      - DB_USER=taskuser
+      - DB_PASSWORD=password123
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend
+    restart: unless-stopped
+
+
 volumes:
   postgres_data:
   maven_cache:

@@ -1,27 +1,45 @@
-function initAddTaskPage() {
-    console.log('Add task page initialized');
+async function showAlert(message, delay = 2000) {
+    alert(message);
+    await new Promise(resolve => setTimeout(resolve, delay));
+}
 
-    const taskForm = document.getElementById('taskForm');
-    if (!taskForm) {
-        console.error('Task form not found');
-        return;
+async function sendTask(task) {
+    try {
+        const response = await fetch('/api/task', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(task)
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.error || 'Ошибка при добавлении задачи');
+        }
+
+        return await response.json();
+    } catch (err) {
+        alert('Ошибка: ' + err.message);
+        console.error(err);
     }
+}
+
+function initAddTaskPage() {
+    const taskForm = document.getElementById('taskForm');
+    if (!taskForm) return;
 
     taskForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const taskTitle = document.getElementById('taskTitle').value;
-        const taskDescription = document.getElementById('taskDescription').value;
-        const taskDueDate = document.getElementById('taskDueDate').value;
+        const task = {
+            title: document.getElementById('taskTitle').value,
+            description: document.getElementById('taskDescription').value,
+            due_date: document.getElementById('taskDueDate').value,
+        };
 
-        console.log('Form submitted (decorative):', {
-            taskTitle,
-            taskDescription,
-            taskDueDate
-        });
-
-        await showAlert('Задача добавлена', 2000);
-        console.log('Alert shown successfully');
+        await sendTask(task);
+        await showAlert('Задача добавлена');
         taskForm.reset();
     });
 }
