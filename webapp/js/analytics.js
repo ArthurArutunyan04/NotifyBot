@@ -158,3 +158,6 @@ async function initAnalyticsPage() {
 }
 
 window.onload = initAnalyticsPage;
+function navigateTo(url) {
+    window.location.assign(url);
+}
