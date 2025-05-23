@@ -98,12 +98,12 @@ function showAlert(message, duration = 3000) {
 //     logToDebug("Token validation skipped as decorative");
 // }
 //
-// function detectPlatform() {
-//     if (window.Telegram && Telegram.WebApp) return 'tg';
-//     return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-//         ? 'mobile'
-//         : 'desktop';
-// }
+function detectPlatform() {
+    if (window.Telegram && Telegram.WebApp) return 'tg';
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        ? 'mobile'
+        : 'desktop';
+}
 
 function initPlatform() {
     document.body.classList.add(`platform-${APP_CONFIG.PLATFORM}`);
