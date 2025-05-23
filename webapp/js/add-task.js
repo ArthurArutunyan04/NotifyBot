@@ -1,16 +1,26 @@
+function showMessage(msg) {
+    if (window.Telegram && Telegram.WebApp && Telegram.WebApp.showAlert) {
+        Telegram.WebApp.showAlert(msg);
+    } else {
+        alert(msg);
+    }
+}
+
 async function fetchTasks() {
     try {
-        const res = await fetch('/api/tasks');
+        const res = await fetch('/api/task');
         if (!res.ok) throw new Error('Ошибка загрузки задач');
         return await res.json();
     } catch (e) {
-        alert(e.message);
+        showMessage(e.message);
         return [];
     }
 }
 
 function formatDate(dateStr) {
+    if (!dateStr) return '';
     const d = new Date(dateStr);
+    if (isNaN(d)) return '';
     return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
@@ -21,8 +31,8 @@ function createTaskHTML(task) {
             <p>${task.description ? `Описание: ${task.description}` : ''}</p>
             <div class="task-meta">
                 <span class="due-date">Срок выполнения: ${formatDate(task.due_date)}</span>
-                <button class="btn task-action-btn complete-btn" onclick="completeTask(${task.id})">✓</button>
-                <button class="btn task-action-btn delete-btn" onclick="deleteTask(${task.id})">❌</button>
+                <button class="btn task-action-btn complete-btn" data-action="complete" data-id="${task.id}">✓</button>
+                <button class="btn task-action-btn delete-btn" data-action="delete" data-id="${task.id}">❌</button>
             </div>
         </div>
     `;
@@ -30,21 +40,21 @@ function createTaskHTML(task) {
 
 async function renderTasks() {
     const tasks = await fetchTasks();
-    const html = tasks.map(createTaskHTML).join('');
+    const html = tasks.length ? tasks.map(createTaskHTML).join('') : '<p>Нет активных задач.</p>';
 
-    const containers = [
-        document.getElementById('activeTasksContainer'),
-        document.getElementById('activeTasksContainerMobile'),
-        document.getElementById('activeTasksContainerDesktop')
-    ];
-
-    containers.forEach(container => {
-        container.innerHTML = html || '<p>Нет активных задач.</p>';
+    const containerIds = ['activeTasksContainer', 'activeTasksContainerMobile', 'activeTasksContainerDesktop'];
+    containerIds.forEach(id => {
+        const container = document.getElementById(id);
+        if (container) {
+            container.innerHTML = html;
+        }
     });
 
-    // Спрятать или показать loader
     const loader = document.getElementById('loader');
     if (loader) loader.style.display = 'none';
+
+    // После рендера навесим обработчики кнопок
+    attachTaskButtonsHandlers();
 }
 
 async function updateTaskStatus(id, status) {
@@ -52,15 +62,15 @@ async function updateTaskStatus(id, status) {
         const res = await fetch(`/api/task/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({status})
+            body: JSON.stringify({ status })
         });
         if (!res.ok) {
-            const data = await res.json();
+            const data = await res.json().catch(() => ({}));
             throw new Error(data.error || 'Ошибка обновления задачи');
         }
         await renderTasks();
     } catch (e) {
-        alert(e.message);
+        showMessage(e.message);
     }
 }
 
@@ -69,7 +79,37 @@ function completeTask(id) {
 }
 
 function deleteTask(id) {
-    updateTaskStatus(id, 'Удалена');
+    if (confirm('Вы уверены, что хотите удалить задачу?')) {
+        updateTaskStatus(id, 'Удалена');
+    }
 }
 
-window.onload = renderTasks;
+function attachTaskButtonsHandlers() {
+    const buttons = document.querySelectorAll('.task-action-btn');
+    buttons.forEach(btn => {
+        btn.onclick = () => {
+            const id = btn.dataset.id;
+            const action = btn.dataset.action;
+            if (!id || !action) return;
+
+            if (action === 'complete') {
+                completeTask(id);
+            } else if (action === 'delete') {
+                deleteTask(id);
+            }
+        };
+    });
+}
+
+function navigateTo(url) {
+    window.location.href = url;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderTasks();
+
+    const backBtn = document.querySelector('.back-btn');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => navigateTo('index.html'));
+    }
+});
